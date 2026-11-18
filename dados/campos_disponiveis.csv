@@ -1,0 +1,17 @@
+﻿campo;disponivel;detalhe;uso_sugerido_no_painel
+Quantidade total;Sim;473;Indicador principal
+Sexo;Sim (agregado);2 categorias;Gráfico de barras ou rosca
+Faixa etária;Sim (agregado);"6 faixas; a última veio como 65 a 74, e não 65 ou mais";Barras verticais (pirâmide não é possível: não há cruzamento com sexo)
+Raça/cor;Não;A Prefeitura disse que esses dados não foram disponibilizados;Mostrar como lacuna
+Escolaridade;Não;Não foi fornecido pela Prefeitura;Mostrar como lacuna
+Pessoa com deficiência;Não;Não foi fornecido pela Prefeitura;Mostrar como lacuna
+Função ou cargo;Sim (agregado);15 funções;Barras horizontais, agrupadas por área
+Regime de jornada;Sim (cruzado com função);30h, 40h, 12x36 diurno/noturno, 24x96;Barras empilhadas função x regime
+Turno (diurno/noturno);Parcial;"Só nos plantões 12x36; 40h e 30h não dizem o turno";Barras simples
+Unidade de lotação;Só a lista;72 unidades citadas, sem quantidade de trabalhadores por unidade;Mapa de presença e lista filtrável
+Empresa;Sim;Uma só: Delta Construções e Serviços Ltda;Cartão de destaque
+Data de início;Sim;28/11/2025 (data única, do contrato);Linha do tempo
+Salário, faixa salarial, adicionais;Não;A Prefeitura disse que é preciso pedir à empresa;"Lacuna; o contrato só traz o custo mensal por posto ao Município"
+Benefícios (VA, VT, plano);Não;A Prefeitura disse que é preciso pedir à empresa;Lacuna
+Valor por posto no contrato;Sim;46 itens, valor unitário mensal;Tabela e barras (custo por função)
+Postos previstos x trabalhadores informados;Sim (calculado);Cruzamento contrato x resposta;Gráfico de halteres ou barras lado a lado

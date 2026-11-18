@@ -1,0 +1,30 @@
+﻿municipio;area;funcao;regime;trabalhadores;tipo_jornada;turno;percentual_da_tabela
+Mossoró;Manutenção;Eletricista;40h;1;Carga semanal fixa;Diurno (horário comercial, presumido);0,2
+Mossoró;Limpeza e conservação;Auxiliar de Serviços Gerais;30h;10;Carga semanal fixa;Diurno (horário comercial, presumido);2,1
+Mossoró;Transporte;Motorista Categoria B;40h;18;Carga semanal fixa;Diurno (horário comercial, presumido);3,9
+Mossoró;Limpeza e conservação;Auxiliar de Serviços Gerais;40h;90;Carga semanal fixa;Diurno (horário comercial, presumido);19,3
+Mossoró;Portaria;Porteiro;12x36 diurno;4;Plantão 12x36;Diurno;0,9
+Mossoró;Portaria;Porteiro;12x36 noturno;3;Plantão 12x36;Noturno;0,6
+Mossoró;Apoio administrativo;Supervisor;40h;1;Carga semanal fixa;Diurno (horário comercial, presumido);0,2
+Mossoró;Manutenção;Auxiliar de Eletricista;40h;1;Carga semanal fixa;Diurno (horário comercial, presumido);0,2
+Mossoró;Limpeza e conservação;Auxiliar de Serviços Gerais;12x36 diurno;22;Plantão 12x36;Diurno;4,7
+Mossoró;Apoio assistencial e regulação;Técnico em Regulação Médica;12x36 diurno;5;Plantão 12x36;Diurno;1,1
+Mossoró;Apoio administrativo;Recepcionista;40h;64;Carga semanal fixa;Diurno (horário comercial, presumido);13,7
+Mossoró;Transporte;Motorista Categoria D;40h;10;Carga semanal fixa;Diurno (horário comercial, presumido);2,1
+Mossoró;Apoio administrativo;Assistente Técnico de Secretariado;40h;121;Carga semanal fixa;Diurno (horário comercial, presumido);26,0
+Mossoró;Alimentação;Cozinheiro;40h;9;Carga semanal fixa;Diurno (horário comercial, presumido);1,9
+Mossoró;Transporte;Motorista Categoria E;24x96;2;Plantão 24x96;Não informado;0,4
+Mossoró;Apoio assistencial e regulação;Maqueiro;12x36 noturno;2;Plantão 12x36;Noturno;0,4
+Mossoró;Transporte;Motorista Categoria D;24x96;12;Plantão 24x96;Não informado;2,6
+Mossoró;Transporte;Motorista de Ambulância;24x96;38;Plantão 24x96;Não informado;8,2
+Mossoró;Transporte;Motorista de Ambulância;12x36;2;Plantão 12x36;Não informado;0,4
+Mossoró;Apoio administrativo;Assistente Técnico de Secretariado;12x36 diurno;11;Plantão 12x36;Diurno;2,4
+Mossoró;Apoio assistencial e regulação;Técnico em Regulação Médica;12x36 noturno;6;Plantão 12x36;Noturno;1,3
+Mossoró;Transporte;Motorista Categoria D;12x36;1;Plantão 12x36;Não informado;0,2
+Mossoró;Apoio assistencial e regulação;Maqueiro;12x36 diurno;6;Plantão 12x36;Diurno;1,3
+Mossoró;Alimentação;Cozinheiro;12x36 diurno;6;Plantão 12x36;Diurno;1,3
+Mossoró;Apoio administrativo;Assistente Técnico de Secretariado;30h;7;Carga semanal fixa;Diurno (horário comercial, presumido);1,5
+Mossoró;Apoio administrativo;Assistente Técnico de Secretariado;12x36 noturno;3;Plantão 12x36;Noturno;0,6
+Mossoró;Limpeza e conservação;Auxiliar de Serviços Gerais;12x36 noturno;7;Plantão 12x36;Noturno;1,5
+Mossoró;Apoio administrativo;Recepcionista;12x36 diurno;3;Plantão 12x36;Diurno;0,6
+Mossoró;Apoio assistencial e regulação;Rádio Operador;12x36 diurno;1;Plantão 12x36;Diurno;0,2

@@ -1,0 +1,79 @@
+﻿municipio;unidade;tipo;zona;citada_na_resposta_sms;no_contrato_lista_ponto;nome_no_contrato;endereco_contrato;trabalhadores_por_unidade;observacao;lat;lon;precisao
+Mossoró;AMI – Ambulatório Materno Infantil;Unidade especializada;Urbana;sim;sim;AMI - Dr. Raimundo de Medeiros Fernandes - PAM;Rua Venceslau Braz, SN, Bom Jardim;não informado;;-5,17523;-37,33058;rua
+Mossoró;Almoxarifado Central;Apoio administrativo;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;CAPS AD III – Álcool e Drogas;Unidade especializada;Urbana;sim;sim;CAPS AD III - Álcool e Drogas;Rua Francisco Bezerra, SN, Nova Betânia;não informado;;-5,179;-37,35558;rua
+Mossoró;CAPS I – Maria Neuman;Unidade especializada;Urbana;sim;sim;CAPS II Enfª Mariana Neumam Vidal da Costa;Av. Alberto Maranhão, 563, Alto da Conceição;não informado;No contrato aparece como CAPS II;-5,21591;-37,3622;rua
+Mossoró;CAPS II – Antônio Herculano;Unidade especializada;Urbana;sim;sim;CAPS II Antônio Herculano S. de Oliveira;Rua Severino Melo, SN, Nova Betânia;não informado;;-5,17877;-37,36668;bairro
+Mossoró;CAPS Infantil;Unidade especializada;Urbana;sim;sim;CAPS i Enfª Maria de Fátima A. F. de Medeiros;Rua Adauto Pinheiro, 70, Nova Betânia;não informado;;-5,17877;-37,36668;bairro
+Mossoró;CCZ – Centro de Controle de Zoonoses;Unidade especializada;Urbana;sim;sim;Centro de Controle de Zoonoses;Rua Aldemir Fernandes, 452, Aeroporto;não informado;;-5,18812;-37,36131;rua
+Mossoró;CEO I e II – Centros de Especialidades Odontológicas;Unidade especializada;Urbana;sim;sim;CEO I - Centro de Especialidade Odontológica / CEO II - Centro de Especialidade Odontológica;Rua Juvenal Lamartine, SN, Santo Antônio;não informado;Duas unidades no contrato;-5,18719;-37,3444;rua
+Mossoró;CER – Centro Especializado em Reabilitação;Unidade especializada;Urbana;sim;sim;Centro Especializado em Reabilitação - CER IV;Rua Francisco Pascoal, Santo Antônio;não informado;;-5,1669;-37,3414;unidade
+Mossoró;CEREST – Centro de Referência em Saúde do Trabalhador;Unidade especializada;Urbana;sim;sim;CEREST;Rua Afonso Pena, 152, Bom Jardim;não informado;;-5,18616;-37,33453;rua
+Mossoró;CO – Centro de Obesidade;Unidade especializada;Urbana;sim;sim;Centro de Obesidade Jansen Jefferson D. E. Medeiros;Rua Juvenal Lamartine, SN, Santo Antônio;não informado;;-5,18719;-37,3444;rua
+Mossoró;Hospital Municipal Francisca Conceição da Silva;Hospital;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;Hospital Psiquiátrico Dr. Milton Marques;Hospital;Urbana;sim;sim;Hospital Psiquiátrico Dr. Milton Marques de Medeiros;Av. Coelho Neto, SN, Boa Vista;não informado;;-5,20501;-37,34409;rua
+Mossoró;PAM – Centro Clínico Professor Vingt-un Rosado;Unidade especializada;Urbana;sim;sim;Centro Clínico Vingt-Un Rosado - PAM Bom Jardim;Rua Afonso Pena, 152, Bom Jardim;não informado;;-5,18616;-37,33453;rua
+Mossoró;Residência Terapêutica;Unidade especializada;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;SAD – Serviço de Atendimento Domiciliar;Unidade especializada;Urbana;sim;sim;Serviço de Atenção Domiciliar (SAD);Rua Aldemir Fernandes, 452, Aeroporto;não informado;;-5,18812;-37,36131;rua
+Mossoró;SAMU – Serviço de Atendimento Móvel de Urgência;Urgência;Urbana;sim;sim;SAMU;Rua Seis de Janeiro, 509, Santo Antônio;não informado;;-5,18111;-37,34475;rua
+Mossoró;Centro Administrativo;Apoio administrativo;Urbana;sim;sim;Secretaria Municipal de Saúde;R. Pedro Álvares Cabral, SN, Aeroporto, 59600-005;não informado;Correspondência provável com a sede da Secretaria;-5,18763;-37,36057;rua
+Mossoró;SVO – Serviço de Verificação de Óbito;Unidade especializada;Urbana;sim;sim;SVO;R. Atirador Miguel Antônio da Silva, SN, Aeroporto, 59607-360;não informado;;-5,18933;-37,3698;rua
+Mossoró;UAI – Unidade de Acolhimento Infantojuvenil;Unidade especializada;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;UBS Alcides Martins Veras;UBS;Rural;sim;sim;UBS Alcides Martins Vera;Sítio Passagem de Pedra, SN, Zona Rural;não informado;;-5,1567;-37,284;unidade
+Mossoró;UBS Almir Mariano de Sousa;UBS;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;UBS Antônia Edilma Lima;UBS;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;UBS Antônio Camilo;UBS;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;UBS Antônio Carlito Júnior;UBS;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;UBS Bernadete Bezerra;UBS;Urbana;sim;sim;UBS Bernardete de Souza Ramos;R. Margarida Militão, SN, Dom Jaime Câmara, 59628-525;não informado;Correspondência provável (nome diferente no contrato);-5,22841;-37,3191;rua
+Mossoró;UBS Chafariz – Zona Rural;UBS;Rural;sim;sim;UBS Chafariz;Chafariz, SN, Zona Rural;não informado;;;;sem localização
+Mossoró;UBS Chico Costa;UBS;Urbana;sim;sim;UBS Chico Costa / UBS Dr. Chico Costa;R. Seis de Janeiro, Santo Antônio, 59621-070;não informado;Aparece duas vezes na lista do contrato;-5,18111;-37,34475;rua
+Mossoró;UBS Chico Porto;UBS;Urbana;sim;sim;UBS Dr. Chico Porto;Av. Mota Neto, 64, Nova Betânia, 59607-000;não informado;;-5,17894;-37,36182;rua
+Mossoró;UBS Conchita Ciarlini;UBS;Urbana;sim;sim;UBS Enfermeira Conchita Escossia Ciarlini;Rua Delfim Moreira, SN, Abolição II, 59618-610;não informado;;-5,17483;-37,34905;rua
+Mossoró;UBS Dr. Agnaldo Pereira;UBS;Urbana;sim;sim;UBS Dr. Aguinaldo Pereira;Rua André Pedro Fernandes, Vingt Rosado, 59626-350;não informado;;-5,20143;-37,3092;rua
+Mossoró;UBS Dr. Antônio Soares Júnior;UBS;Urbana;sim;sim;UBS Antônio Soares Junior;Rua Josefa Xavier de Medeiros, 497, Bom Jesus, 59635-000;não informado;;-5,22942;-37,35107;rua
+Mossoró;UBS Dr. Epitácio da Costa Carvalho;UBS;Urbana;sim;sim;UBS Epitácio;Av. Francisco Mota, Vingt Rosado, 59626-105;não informado;;-5,2077;-37,33144;rua
+Mossoró;UBS Dr. Francisco Nazareno;UBS;Urbana;sim;sim;UBS Francisco Nazareno;Rua Antônio Nestor de Souza, Dix-Sept Rosado, 59609-005;não informado;;-5,19112;-37,38173;rua
+Mossoró;UBS Dr. Helênio Gurgel;UBS;Urbana;sim;sim;UBS Dr. Helênio Gurgel;Av. Cunha da Mota, 443a, Centro, 59600-160;não informado;;-5,1944;-37,34308;rua
+Mossoró;UBS Dr. Ildone Cavalcante de Freitas;UBS;Urbana;sim;sim;UBS Dr. Ildone Cavalcante;Rua Marechal Deodoro, SN, Barrocas, 59618-120;não informado;;-5,17108;-37,32437;rua
+Mossoró;UBS Dr. Joaquim Saldanha;UBS;Urbana;sim;sim;UBS Dr. Joaquim Saldanha;Rua Nicácia Costa de Araújo, SN, Santo Antônio, 59621-550;não informado;;-5,16414;-37,33942;rua
+Mossoró;UBS Dr. José Fernandes de Melo;UBS;Urbana;sim;sim;UBS Dr. José Fernandes de Melo;R. Delfino Freire, Boa Vista, 59605-130;não informado;;-5,19686;-37,3546;rua
+Mossoró;UBS Dr. José Holanda Cavalcante;UBS;Urbana;sim;sim;UBS Dr. José Holanda;Rua Herondina Cavalcante Dantas, 03, Dom Jaime Câmara;não informado;;-5,23339;-37,30906;rua
+Mossoró;UBS Dr. José Leão;UBS;Urbana;sim;sim;UBS Dr. José Leão;Rua Joaquim Nabuco, 820, Belo Horizonte, 59600-465;não informado;;-5,20692;-37,35539;rua
+Mossoró;UBS Dr. Lucas Benjamim;UBS;Urbana;sim;sim;UBS Dr. Lucas Benjamim;Rua Desembargador José Vieira, SN, Abolição III;não informado;;-5,16575;-37,35701;rua
+Mossoró;UBS Dr. Moisés da Costa Lopes;UBS;Urbana;sim;sim;UBS Dr. Moises Costa Lopes;Rua Senador Ruy Carneiro, 17, Barrocas, 59620-355;não informado;;-5,1426;-37,3474;unidade
+Mossoró;UBS Dr. Raimundo Clodovil;UBS;Urbana;sim;sim;UBS Dr. Raimundo Clodovil Cavalcante da Silva;R. Diego Martins da Rocha Bezerra, SN, Santa Júlia, 59616-540;não informado;;-5,1396;-37,3588;unidade
+Mossoró;UBS Dr. Sid Salem;UBS;Urbana;sim;sim;UBS Cid Salem;Av. Pres. Costa e Silva, Abolição IV;não informado;;-5,15791;-37,36041;bairro
+Mossoró;UBS Dr. Sueldo Câmara;UBS;Urbana;sim;sim;UBS Dr. Sueldo Câmara;R. Neide Pinheiro de Paula, 31, Quixabeirinha;não informado;;;;sem localização
+Mossoró;UBS Duclecio Antônio;UBS;Urbana;sim;sim;UBS Duclécio Antônio de Medeiros;R. Aldemiro Francisco de Moura, SN, Pres. Costa e Silva, 59628-370;não informado;;-5,2165;-37,3229;unidade
+Mossoró;UBS Durval Costa;UBS;Urbana;sim;sim;UBS Dr. Vereador Durval Costa;R. Ralph Soppor, SN, Walfredo Gurgel, 59628-050;não informado;;-5,211;-37,33043;rua
+Mossoró;UBS Elias Honorato – Zona Rural;UBS;Rural;sim;sim;UBS Elias Honorato;Sítio Alagoinha, Aeroporto, 59607-140;não informado;;;;sem localização
+Mossoró;UBS Francisco Canindé – Zona Rural;UBS;Rural;sim;sim;UBS Francisco Canindé Ferreira;Pau Branco, SN, Zona Rural;não informado;;-4,90981;-37,40991;localidade
+Mossoró;UBS Francisco Marques da Silva;UBS;Urbana;sim;sim;UBS Francisco Marques da Silva;Rua Farias, 417, Planalto Treze de Maio, 59631-380;não informado;;-5,21854;-37,34055;rua
+Mossoró;UBS Francisco Neto da Luz – Zona Rural;UBS;Rural;sim;sim;UBS Francisco Neto da Luz;Sítio Riacho Grande, Zona Rural;não informado;;-5,14561;-37,45139;localidade
+Mossoró;UBS Francisco Pereira de Azevedo;UBS;Urbana;sim;sim;UBS Francisco Pereira;Rua Pedro Paraguai, SN, Liberdade I;não informado;;-5,22375;-37,3285;bairro
+Mossoró;UBS Hipólito – Zona Rural;UBS;Rural;sim;sim;UBS Hipólito;Sítio Hipólito, Zona Rural;não informado;;-5,40313;-37,22736;localidade
+Mossoró;UBS Izabel Bezerra de Araújo – Zona Rural;UBS;Rural;sim;sim;UBS Izabel Bezerra de Araújo;Rua Domingos Julião Nascimento, SN, Jucuri;não informado;;-5,21525;-37,4984;localidade
+Mossoró;UBS Lahyre Rosado;UBS;Urbana;sim;sim;UBS Vereador Lahyre Rosado;R. Lourival Caetano Ferreira, SN, Sumaré, 59633-710;não informado;;-5,22772;-37,33511;rua
+Mossoró;UBS Luiz Escolástico;UBS;Urbana;sim;sim;UBS Dr. Luiz Escolástico;R. Henrique Maciel de Lima, 19, Santa Delmira, 59615-310;não informado;;-5,15013;-37,358;rua
+Mossoró;UBS Luiza Vanessa – Zona Rural;UBS;Rural;sim;sim;UBS Luiza Vanessa;Sítio Pau Branco, Zona Rural, Maísa;não informado;;-4,90981;-37,40991;localidade
+Mossoró;UBS Marcos Raimundo Costa;UBS;Urbana;sim;sim;UBS da Família Marcos Raimundo Costa;Rua Marinho Dantas, SN, Belo Horizonte, 59600-500;não informado;;-5,21171;-37,35951;rua
+Mossoró;UBS Maria Neide da Silva;UBS;Urbana;sim;sim;UBS Maria Neide da Silva Souza;Rua Butiá, SN, Jardim das Palmeiras, Dom Jaime Câmara, 59628-593;não informado;;-5,23972;-37,30889;bairro
+Mossoró;UBS Maria Soares da Costa;UBS;Urbana;sim;sim;UBS Maria Soares da Costa;R. Dona Delourdes Montes, Alto de São Manoel, 59631-160;não informado;;-5,21047;-37,3377;rua
+Mossoró;UBS Marina Ferreira – Zona Rural;UBS;Rural;sim;sim;UBS Marina Ferreira;Sítio Barrinha, SN, Zona Rural;não informado;;-5,16608;-37,42122;localidade
+Mossoró;UBS Mario Lúcio de Medeiros;UBS;Urbana;sim;sim;UBS Mário Lúcio de Medeiros;Rincão;não informado;;-5,1971;-37,288;localidade
+Mossoró;UBS Paulo Jansen Dantas – Zona Rural;UBS;Rural;sim;sim;UBS Dr. Paulo Jansen Dantas;Assentamento Real, 01, Zona Rural, Maísa;não informado;;-4,95168;-37,40528;localidade
+Mossoró;UBS Piquiri – Zona Rural;UBS;Rural;sim;sim;UBS Piquiri;Sítio Piquiri, SN, Zona Rural;não informado;;-5,08592;-37,18619;localidade
+Mossoró;UBS Puxa Boi – Zona Rural;UBS;Rural;sim;sim;UBS Puxa Boi;Puxa Boi, SN, Zona Rural;não informado;;;;sem localização
+Mossoró;UBS Raimundo Nonato da Silva – CAIC;UBS;Urbana;sim;sim;UBS Caic Raimundo Nonato;R. Maj. Romão, 50, Belo Horizonte, 59600-480;não informado;;-5,20828;-37,35552;rua
+Mossoró;UBS Raimundo Renê;UBS;Urbana;sim;sim;UBS Raimundo Renê;R. Padre Alesbão, 35, Boa Vista, 59605-140;não informado;;-5,19474;-37,35356;bairro
+Mossoró;UBS Sinharinha Borges;UBS;Urbana;sim;sim;UBS Sinharinha Borges;Rua Riachuelo, SN, Bom Jardim, 59621-080;não informado;;-5,17189;-37,33467;rua
+Mossoró;UBS Zoraide Maria;UBS;Urbana;sim;não;;;não informado;;;;sem localização
+Mossoró;UPA I – Tarcísio de Vasconcelos Maia;UPA;Urbana;sim;sim;UPA Dr. Tarcísio de Vasconcelos Maia;Rua Mariinha Mendes, SN, Alto de São Manoel, 59631-160;não informado;;-5,21076;-37,33652;rua
+Mossoró;UPA II – Conchita Ciarlini;UPA;Urbana;sim;sim;UPA Conchita Ciarlini;R. Seis de Janeiro, 1043, Barrocas, 59621-070;não informado;;-5,18111;-37,34475;rua
+Mossoró;UPA III – Raimundo Benjamim Franco;UPA;Urbana;sim;sim;UPA Raimundo Benjamim Franco;R. Jaen Menescal, 419, Lagoa do Mato, 59604-200;não informado;;-5,20216;-37,3579;rua
+Mossoró;UBS Centro Clínico Evangélico Edgard Bulamarqui;UBS;Urbana;não;sim;UBS Centro Clínico Evangélico Edgard Bulamarqui;R. José Negreiros, 346, Centro, 59610-170;não informado;Só aparece na lista de ponto eletrônico do contrato;-5,19125;-37,33769;rua
+Mossoró;Cemitério do Jucuri;Cemitério;Rural;não;sim;Cemitério do Jucuri;BR 405, SN, Jucuri, Zona Rural;não informado;Só aparece na lista de ponto eletrônico do contrato;;;sem localização
+Mossoró;Cemitério Novo Tempo;Cemitério;Urbana;não;sim;Cemitério Novo Tempo;BR 304, SN, Aeroporto;não informado;Só aparece na lista de ponto eletrônico do contrato;-5,16178;-37,35067;localidade
+Mossoró;Cemitério Público Francisco Torquato da Silva;Cemitério;Rural;não;sim;Cemitério Público Francisco Torquato da Silva;Sítio Santana, SN, Zona Rural;não informado;Só aparece na lista de ponto eletrônico do contrato;-5,22547;-37,31159;localidade
+Mossoró;Cemitério São Sebastião;Cemitério;Urbana;não;sim;Cemitério São Sebastião;R. Melo Franco, 13, Doze Anos, 59621-090;não informado;Só aparece na lista de ponto eletrônico do contrato;-5,18828;-37,34592;rua
+Mossoró;PNI;Outro;Urbana;não;sim;PNI;R. Pedro Álvares Cabral, SN, Aeroporto, 59600-005;não informado;Só aparece na lista de ponto eletrônico do contrato;-5,18763;-37,36057;rua

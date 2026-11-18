@@ -1,0 +1,13 @@
+﻿limitacao;explicacao
+Dados agregados;A Prefeitura não mandou planilha por trabalhador. Só totais. Por isso não dá para cruzar sexo com idade, sexo com função, idade com unidade etc.
+Totais diferentes;"Total geral 473; soma por faixa etária 472; tabela por função 466. Faltam 1 trabalhador na idade e 7 na tabela de funções, sem explicação."
+Faixa etária final;"O ODSS pediu '65 anos ou mais'; a resposta veio como '65 a 74 anos'. Não se sabe se há trabalhadores com 75 anos ou mais."
+Unidades sem quantidade;A resposta lista 72 unidades, mas não diz quantos trabalhadores estão em cada uma. Um mapa só pode mostrar onde há terceirizados, não quantos.
+Listas de unidades diferentes;"A lista do contrato (pontos eletrônicos, 71 locais) inclui 4 cemitérios, o PNI e um centro clínico que não aparecem na resposta; a resposta cita 9 unidades sem endereço no contrato (5 UBS, Almoxarifado, Hospital Municipal, Residência Terapêutica e UAI)."
+Nomes de função;"A resposta usa 'Técnico em Regulação Médica'; o contrato usa 'Técnico Auxiliar em Regulação Médica'. A resposta cita 'Porteiro Desarmado' no texto e 'Porteiro' na tabela. Foram padronizados."
+Regime presumido;Itens do contrato sem regime no nome (Assistente Técnico de Secretariado, Cozinheiro, Motorista D, Recepcionista e os de manutenção) foram tratados como 40h. Motorista D 12x36 e Motorista de Ambulância 12x36 não dizem diurno ou noturno.
+Postos previstos (interpretação);A quantidade do contrato está em 'serviços' por ano. Dividimos por 12 para estimar postos por mês. Na maior parte das funções o número bate com o de trabalhadores (ex.: ASG 40h 90 = 90), o que reforça a leitura, mas é preciso confirmar no Termo de Referência e na planilha de custos.
+Valor do contrato não é salário;O valor unitário é o custo mensal de cada posto para o Município (salário, encargos, benefícios, impostos e lucro da empresa). O salário do trabalhador é bem menor e não foi informado.
+Posto vazio não é pagamento indevido;O contrato manda pagar só o serviço efetivamente prestado (item 9.2.37). Postos previstos sem trabalhador indicam que o contrato está sendo usado abaixo do previsto, não que houve pagamento a mais.
+Retrato de um momento;Os números são de outubro de 2026 (resposta de 27/10/2026). Não há série no tempo.
+Dados não fornecidos;Raça/cor, escolaridade, PcD, salários, adicionais, benefícios e distribuição por unidade não vieram. A SMS diz não ter cadastro individual, mas o próprio contrato (item 9.2.36) obriga a empresa a entregar todo mês relatório com nome, cargo e lotação, folha de ponto e contracheques ao fiscal.

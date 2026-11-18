@@ -1,0 +1,46 @@
+﻿municipio;item;codigo;descricao_contrato;funcao;regime;quantidade_anual_serv;valor_unitario_mensal_rs;valor_total_anual_rs;postos_por_mes;confere_qtd_x_unit;regime_inferido
+Mossoró;1;13414;ASSISTENTE TÉCNICO DE SECRETARIADO DIURNO - 12X36;Assistente Técnico de Secretariado;12x36 diurno;144;5069,05;729943,2;12,0;True;não
+Mossoró;2;13415;ASSISTENTE TÉCNICO DE SECRETARIADO NOTURNO - 12X36;Assistente Técnico de Secretariado;12x36 noturno;168;5659,94;950869,92;14,0;True;não
+Mossoró;3;13416;ASSISTENTE TÉCNICO DE SECRETARIADO - 30H;Assistente Técnico de Secretariado;30h;132;3665,12;483795,84;11,0;True;não
+Mossoró;4;11536;ASSISTENTE TÉCNICO DE SECRETARIADO;Assistente Técnico de Secretariado;40h;1440;4749,54;6839337,6;120,0;True;sim (40h presumido)
+Mossoró;5;2168;AUXILIAR DE ELETRICISTA;Auxiliar de Eletricista;40h;24;4497,94;107950,56;2,0;True;sim (40h presumido)
+Mossoró;6;9955;AUXILIAR DE SERVIÇOS GERAIS 12X36 DIURNO;Auxiliar de Serviços Gerais;12x36 diurno;264;4472,74;1180803,36;22,0;True;não
+Mossoró;7;13417;AUXILIAR DE SERVIÇOS GERAIS NOTURNO - 12X36;Auxiliar de Serviços Gerais;12x36 noturno;360;4965,86;1787709,6;30,0;True;não
+Mossoró;8;13418;AUXILIAR DE SERVIÇOS GERAIS - 30H;Auxiliar de Serviços Gerais;30h;120;3392,22;407066,4;10,0;True;não
+Mossoró;9;12746;AUXILIAR DE SERVIÇOS GERAIS - 40 HORAS;Auxiliar de Serviços Gerais;40h;1080;4301,75;4645890,0;90,0;True;não
+Mossoró;10;2140;BOMBEIRO - HIDRÁULICO;Bombeiro Hidráulico;40h;12;6601,8;79221,6;1,0;True;sim (40h presumido)
+Mossoró;11;2178;CARPINTEIRO;Carpinteiro;40h;12;4785,89;57430,68;1,0;True;sim (40h presumido)
+Mossoró;12;13419;COZINHEIRO DIURNO - 12X36;Cozinheiro;12x36 diurno;72;5971,65;429958,8;6,0;True;não
+Mossoró;13;13420;COZINHEIRO NOTURNO - 12X36;Cozinheiro;12x36 noturno;96;6681,15;641390,4;8,0;True;não
+Mossoró;14;2128;COZINHEIRO;Cozinheiro;40h;108;5652,14;610431,12;9,0;True;sim (40h presumido)
+Mossoró;15;13421;CUIDADOR DIURNO - 12X36;Cuidador;12x36 diurno;96;3516,48;337582,08;8,0;True;não
+Mossoró;16;13422;CUIDADOR NOTURNO - 12X36;Cuidador;12x36 noturno;96;4072,0;390912,0;8,0;True;não
+Mossoró;17;2165;ELETRICISTA;Eletricista;40h;24;6168,6;148046,4;2,0;True;sim (40h presumido)
+Mossoró;18;2180;GESSEIRO;Gesseiro;40h;12;4005,32;48063,84;1,0;True;sim (40h presumido)
+Mossoró;19;8280;JARDINEIRO;Jardineiro;40h;72;4110,77;295975,44;6,0;True;sim (40h presumido)
+Mossoró;20;13423;MAQUEIRO DIURNO - 12X36;Maqueiro;12x36 diurno;144;4290,27;617798,88;12,0;True;não
+Mossoró;21;9956;MAQUEIRO 12X36 - NOTURNO;Maqueiro;12x36 noturno;144;4966,48;715173,12;12,0;True;não
+Mossoró;22;8300;MARCENEIRO;Marceneiro;40h;12;4943,73;59324,76;1,0;True;sim (40h presumido)
+Mossoró;23;12750;"MOTORISTA CATEGORIA ""B"" - 40 HORAS";Motorista Categoria B;40h;240;5757,55;1381812,0;20,0;True;não
+Mossoró;24;9957;"MOTORISTA CATEGORIA ""D"" 24X96";Motorista Categoria D;24x96;144;7490,92;1078692,48;12,0;True;não
+Mossoró;25;8309;"MOTORISTA CATEGORIA ""D""";Motorista Categoria D;40h;120;6945,52;833462,4;10,0;True;sim (40h presumido)
+Mossoró;26;12873;"MOTORISTA CATEGORIA ""D"" - 12X36 (DIURNO)";Motorista Categoria D;12x36;48;7378,93;354188,64;4,0;True;não
+Mossoró;27;13424;MOTORISTA CATEGORIA E - 24X96;Motorista Categoria E;24x96;48;7490,92;359564,16;4,0;True;não
+Mossoró;28;13425;MOTORISTA DE AMBULÂNCIA - 12X36;Motorista de Ambulância;12x36;48;9375,82;450039,36;4,0;True;não
+Mossoró;29;13426;MOTORISTA DE AMBULÂNCIA - 24X96;Motorista de Ambulância;24x96;480;9622,13;4618622,4;40,0;True;não
+Mossoró;30;2171;PEDREIRO;Pedreiro;40h;12;4800,87;57610,44;1,0;True;sim (40h presumido)
+Mossoró;31;8295;PINTOR;Pintor;40h;12;5707,7;68492,4;1,0;True;sim (40h presumido)
+Mossoró;32;12749;PORTEIRO DESARMADO 12X36 - DIURNO;Porteiro;12x36 diurno;72;4081,75;293886,0;6,0;True;não
+Mossoró;33;12617;PORTEIRO DESARMADO 12x36 - NOTURNO;Porteiro;12x36 noturno;96;4551,98;436990,08;8,0;True;não
+Mossoró;34;12747;PORTEIRO DESARMADO - 40 HORAS;Porteiro;40h;72;3865,56;278320,32;6,0;True;não
+Mossoró;35;13427;RÁDIO OPERADOR DIURNO - 12X36;Rádio Operador;12x36 diurno;24;8157,34;195776,16;2,0;True;não
+Mossoró;36;13428;RÁDIO OPERADOR NOTURNO - 12X36;Rádio Operador;12x36 noturno;24;9287,11;222890,64;2,0;True;não
+Mossoró;37;13429;RECEPCIONISTA DIURNO - 12X36;Recepcionista;12x36 diurno;96;4081,69;391842,24;8,0;True;não
+Mossoró;38;13430;RECEPCIONISTA NOTURNO - 12X36;Recepcionista;12x36 noturno;96;4551,92;436984,32;8,0;True;não
+Mossoró;39;11540;RECEPCIONISTA;Recepcionista;40h;780;3865,5;3015090,0;65,0;True;sim (40h presumido)
+Mossoró;40;8296;SERVENTE DE PEDREIRO;Servente de Pedreiro;40h;12;3728,06;44736,72;1,0;True;sim (40h presumido)
+Mossoró;41;2179;SOLDADOR;Soldador;40h;12;5804,28;69651,36;1,0;True;sim (40h presumido)
+Mossoró;42;8297;SUPERVISOR;Supervisor;40h;12;4749,54;56994,48;1,0;True;sim (40h presumido)
+Mossoró;43;8298;TÉCNICO EM REFRIGERAÇÃO;Técnico em Refrigeração;40h;24;4824,47;115787,28;2,0;True;sim (40h presumido)
+Mossoró;44;13431;TÉCNICO AUXILIAR EM REGULAÇÃO MÉDICA DIURNO - 12x36;Técnico em Regulação Médica;12x36 diurno;72;5074,6;365371,2;6,0;True;não
+Mossoró;45;13432;TÉCNICO AUXILIAR EM REGULAÇÃO MÉDICA NOTURNO - 12x36;Técnico em Regulação Médica;12x36 noturno;72;5665,51;407916,72;6,0;True;não

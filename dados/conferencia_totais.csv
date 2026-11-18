@@ -1,0 +1,8 @@
+﻿conferencia;valor_calculado;valor_de_referencia;resultado;fonte_pagina
+Total de trabalhadores informado;473,0;473,0;;pg. 14 e 16
+Soma por sexo;473,0;473,0;confere;pg. 16
+Soma por faixa etária;472,0;473,0;NÃO confere (falta 1);pg. 16
+Soma da tabela função x regime (calculada);466,0;466,0;confere com o 'Total apurado';pg. 17
+Tabela função x regime contra o total geral;466,0;473,0;NÃO confere (faltam 7);pg. 16 e 17
+Soma dos itens do contrato (R$);37462785,79;37462785,79;confere;pg. 22 a 24
+Itens com quantidade x valor unitário = total;45,0;45,0;confere;pg. 22 a 24

@@ -1,0 +1,17 @@
+﻿municipio;indicador;valor;unidade;fonte
+Mossoró;Trabalhadores terceirizados na saúde;473;pessoas;Resposta da SMS, pg. 14
+Mossoró;Mulheres;297;pessoas;pg. 16
+Mossoró;Mulheres (%);62.8;%;pg. 16
+Mossoró;Trabalhadores com 25 a 44 anos (%);53.8;%;pg. 16
+Mossoró;Trabalhadores com 55 anos ou mais (%);15.5;%;pg. 16
+Mossoró;Funções diferentes;15;funções;pg. 17
+Mossoró;Empresas contratadas;1;empresa;Delta Construções e Serviços Ltda, pg. 19 e 22
+Mossoró;Unidades citadas pela SMS;72;unidades;pg. 14 a 16
+Mossoró;UBS citadas;49;UBS;pg. 15 e 16
+Mossoró;UBS na zona rural;12;UBS;pg. 15 e 16
+Mossoró;Valor anual do contrato;37462785.79;R$;Contrato 13/2025, cláusula 5.1
+Mossoró;Postos de trabalho previstos por mês (soma dos itens / 12);604;postos;pg. 22 a 24 (interpretação, ver limitações)
+Mossoró;Custo mensal estimado dos trabalhadores informados;2391999.27;R$;trabalhadores x valor unitário mensal do contrato
+Mossoró;Valor mensal previsto no contrato (sem item 46);3091616.45;R$;soma dos itens 1 a 45 / 12
+Mossoró;Início da prestação dos serviços;28/11/2025;data;pg. 19 e 45
+Mossoró;Vigência;12 meses, prorrogável até 10 anos;;cláusula 2.1

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR" data-tema="azul">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terceirizados da Saúde | ODSS</title>
+  <meta name="description" content="Painel do Observatório dos Direitos Sociais do Semiárido (ODSS/UFERSA) com o perfil dos trabalhadores terceirizados da saúde pública municipal no Oeste Potiguar.">
+  <link rel="icon" type="image/png" href="assets/logo-odss.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="assets/estilo.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-in">
+    <a href="#" class="marca"><img src="assets/logo-odss.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo"></a>
+    <nav class="menu" aria-label="Seções do painel">
+      <a href="#pontos">Em pontos</a>
+      <a href="#perfil">Quem são</a>
+      <a href="#funcoes">O que fazem</a>
+      <a href="#contrato">Contrato</a>
+      <a href="#unidades">Onde trabalham</a>
+      <a href="#lacunas">O que falta</a>
+      <a href="#metodo">Os dados</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <p class="sobretitulo">Painel de transparência</p>
+  <h1><span>Terceirizados</span> <span class="tit-2">da saúde</span></h1>
+  <p class="subtitulo">Quem são, o que fazem e onde trabalham as pessoas contratadas por empresas para as redes públicas municipais de saúde do Rio Grande do Norte.</p>
+  <div class="topo-controles">
+    <label for="sel-municipio">Município</label>
+    <select id="sel-municipio"></select>
+    <span class="fonte-curta" id="fonte-curta"></span>
+  </div>
+</section>
+
+<main>
+  <div id="erro" class="erro" hidden></div>
+
+  <section id="numeros" class="secao">
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section id="pontos" class="secao">
+    <div class="secao-cab">
+      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="2.2"/><circle cx="12" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="12" cy="18" r="2.2"/></svg></span>Cada ponto é uma pessoa</h2>
+      <p>Role a tela devagar. Os pontos se reorganizam para mostrar quem são essas pessoas.</p>
+    </div>
+    <div class="historia">
+      <div class="historia-grafico">
+        <div class="pontos-caixa"><svg id="svg-pontos" role="img" aria-label="Gráfico de pontos: cada ponto é um trabalhador terceirizado"><g class="rotulos"></g></svg></div>
+      </div>
+      <div class="historia-passos" id="passos"></div>
+    </div>
+    <p class="nota">Os dados vieram somados, sem informação por pessoa. Por isso, a cada etapa os pontos se misturam de novo: a cor de uma etapa não continua na seguinte. Assim o gráfico não sugere, por exemplo, quais mulheres são motoristas.</p>
+  </section>
+
+  <section id="perfil" class="secao">
+    <div class="secao-cab">
+      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/><circle cx="17.5" cy="8.5" r="2.5"/><path d="M16.5 13.6c2.9.3 5 2.8 5 5.9"/></svg></span>Quem são</h2>
+      <p>Perfil informado pela Prefeitura, em números somados. Não há dado por pessoa, por isso não é possível cruzar sexo com idade.</p>
+    </div>
+    <div class="grade-2">
+      <article class="cartao">
+        <h3>Sexo</h3>
+        <div id="graf-sexo"></div>
+      </article>
+      <article class="cartao">
+        <h3>Faixa etária</h3>
+        <div id="graf-idade"></div>
+        <p class="nota" id="nota-idade"></p>
+      </article>
+    </div>
+  </section>
+
+  <section id="funcoes" class="secao">
+    <div class="secao-cab">
+      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8.5 7V5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 12.5h18"/></svg></span>O que fazem</h2>
+      <p>Trabalhadores por função, por área e por tipo de jornada.</p>
+    </div>
+    <article class="cartao">
+      <div class="abas" role="tablist" aria-label="Ver trabalhadores por">
+        <button role="tab" aria-selected="true" data-vista="funcao">Por função</button>
+        <button role="tab" aria-selected="false" data-vista="area">Por área</button>
+        <button role="tab" aria-selected="false" data-vista="jornada">Por jornada</button>
+        <button role="tab" aria-selected="false" data-vista="turno">Por turno</button>
+      </div>
+      <div id="graf-funcoes"></div>
+      <p class="nota" id="nota-funcoes"></p>
+    </article>
+  </section>
+
+  <section id="contrato" class="secao">
+    <div class="secao-cab">
+      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></span>Contrato x realidade</h2>
+      <p>O contrato diz quantos postos de trabalho a empresa pode ocupar. A Prefeitura informou quantas pessoas estão trabalhando. Aqui comparamos os dois.</p>
+    </div>
+    <div class="destaque" id="destaque-contrato"></div>
+    <div class="mini-kpis" id="situacoes"></div>
+    <article class="cartao">
+      <h3>As vagas do contrato, uma a uma</h3>
+      <p class="nota nota-topo">Cada quadradinho é um posto de trabalho previsto por mês no contrato. Os azuis têm alguém trabalhando; os vazios, não. Passe o mouse (ou toque) para ver a função.</p>
+      <div class="vagas" id="vagas" aria-describedby="legenda-vagas"></div>
+      <div class="legenda" id="legenda-vagas"></div>
+    </article>
+    <article class="cartao">
+      <h3>Postos previstos por mês e trabalhadores informados, por função</h3>
+      <div class="legenda" aria-hidden="true">
+        <span><i class="ponto ponto-1"></i>Postos previstos no contrato</span>
+        <span><i class="ponto ponto-2"></i>Trabalhadores informados</span>
+      </div>
+      <div id="graf-halteres"></div>
+      <details class="tabela-det">
+        <summary>Ver item por item do contrato</summary>
+        <div id="tab-contrato"></div>
+      </details>
+    </article>
+    <div class="aviso">
+      <strong>Atenção ao ler.</strong> Posto vazio não quer dizer pagamento a mais: o contrato manda pagar só o serviço que foi prestado (item 9.2.37). O valor por posto é o custo mensal para o Município (salário, encargos, benefícios, impostos e lucro da empresa), e não o salário do trabalhador.
+    </div>
+  </section>
+
+  <section id="unidades" class="secao">
+    <div class="secao-cab">
+      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>Onde trabalham</h2>
+      <p>Unidades onde a Prefeitura diz haver terceirizados. <strong>Ela não informou quantas pessoas trabalham em cada uma.</strong></p>
+    </div>
+    <div class="mini-kpis" id="tipos-unidade"></div>
+    <article class="cartao">
+      <div class="filtros">
+        <input type="search" id="busca-unidade" placeholder="Buscar unidade ou bairro" aria-label="Buscar unidade ou bairro">
+        <select id="filtro-tipo" aria-label="Filtrar por tipo"></select>
+        <select id="filtro-zona" aria-label="Filtrar por zona">
+          <option value="">Zona urbana e rural</option>
+          <option value="Urbana">Só zona urbana</option>
+          <option value="Rural">Só zona rural</option>
+        </select>
+        <label class="check"><input type="checkbox" id="filtro-so-sms" checked> Só as citadas pela Secretaria</label>
+      </div>
+      <div class="mapa" id="mapa" role="region" aria-label="Mapa das unidades de saúde"></div>
+      <div class="legenda legenda-mapa">
+        <span><i class="ponto m-ubs"></i>UBS</span>
+        <span><i class="ponto m-upa"></i>UPA e urgência</span>
+        <span><i class="ponto m-esp"></i>Hospital, unidade especializada ou administrativa</span>
+        <span><i class="ponto m-outro"></i>Só na lista do contrato</span>
+      </div>
+      <p class="nota" id="nota-mapa"></p>
+      <p class="contagem" id="contagem-unidades"></p>
+      <div class="tabela-rolagem"><table class="tabela" id="tab-unidades"></table></div>
+    </article>
+  </section>
+
+  <section id="lacunas" class="secao">
+    <div class="secao-cab">
+      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="11" width="15" height="10" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></span>O que não foi informado</h2>
+      <p>O ODSS pediu estes dados, de forma somada e sem identificar ninguém. A Prefeitura não os forneceu. Para um observatório de transparência, a ausência também é um resultado.</p>
+    </div>
+    <div class="lacunas" id="lista-lacunas"></div>
+  </section>
+
+  <section id="metodo" class="secao">
+    <div class="secao-cab">
+      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6.5c0 1.6 3.4 2.8 7.5 2.8s7.5-1.2 7.5-2.8V5.5"/><path d="M4.5 12v6.5c0 1.6 3.4 2.8 7.5 2.8s7.5-1.2 7.5-2.8V12"/></svg></span>Como lemos os dados</h2>
+      <p id="texto-fonte"></p>
+    </div>
+    <article class="cartao">
+      <h3>Conferência dos totais</h3>
+      <div id="tab-conferencia"></div>
+    </article>
+    <div class="grade-2 grade-metodo">
+      <article class="cartao">
+        <h3>Limitações</h3>
+        <dl class="limitacoes" id="lista-limitacoes"></dl>
+      </article>
+      <article class="cartao">
+        <h3>Baixar os dados</h3>
+        <p class="nota">Arquivos em CSV (abrem no Excel) e uma planilha com tudo. Só números somados, sem nome ou CPF de ninguém.</p>
+        <ul class="downloads" id="downloads"></ul>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape-in">
+    <img src="assets/logo-odss.png" alt="" class="logo-rodape logo-cor"><img src="assets/logo-odss-branca.png" alt="" class="logo-rodape logo-branca">
+    <div>
+      <p><strong>Observatório dos Direitos Sociais do Semiárido (ODSS)</strong>, projeto de pesquisa e extensão da Universidade Federal Rural do Semi-Árido (UFERSA).</p>
+      <p>Projeto financiado pela Controladoria-Geral do Estado do Rio Grande do Norte.</p>
+      <p>Contato: <a href="mailto:odss@ufersa.edu.br">odss@ufersa.edu.br</a> | <a href="https://odss.ufersa.edu.br">odss.ufersa.edu.br</a></p>
+    </div>
+  </div>
+</footer>
+
+<div class="dica" id="dica" role="tooltip" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="assets/painel.js"></script>
+</body>
+</html>
