@@ -6,6 +6,16 @@
   <title>Terceirizados da Saúde | ODSS</title>
   <meta name="description" content="Painel do Observatório dos Direitos Sociais do Semiárido (ODSS/UFERSA) com o perfil dos trabalhadores terceirizados da saúde pública municipal no Oeste Potiguar.">
   <link rel="icon" type="image/png" href="assets/logo-odss.png">
+  <meta name="theme-color" content="#FFFFFF">
+  <script>
+    /* aplica o modo (claro ou escuro) antes de desenhar a pagina, para nao piscar */
+    (function () {
+      var m = null;
+      try { m = localStorage.getItem("modo"); } catch (e) {}
+      if (m !== "claro" && m !== "escuro") m = matchMedia("(prefers-color-scheme: dark)").matches ? "escuro" : "claro";
+      document.documentElement.setAttribute("data-modo", m);
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +26,7 @@
 
 <header class="topo">
   <div class="topo-in">
-    <a href="#" class="marca"><img src="assets/logo-odss.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo"></a>
+    <a href="#" class="marca"><img src="assets/logo-odss.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo logo-claro"><img src="assets/logo-odss-branca.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo logo-escuro"></a>
     <nav class="menu" aria-label="Seções do painel">
       <a href="#pontos">Em pontos</a>
       <a href="#perfil">Quem são</a>
@@ -26,6 +36,10 @@
       <a href="#lacunas">O que falta</a>
       <a href="#metodo">Os dados</a>
     </nav>
+    <button type="button" class="botao-modo" id="botao-modo" aria-label="Ativar modo escuro" title="Ativar modo escuro">
+      <svg class="i-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+      <svg class="i-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+    </button>
   </div>
 </header>
 

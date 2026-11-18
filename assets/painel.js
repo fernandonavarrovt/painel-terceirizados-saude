@@ -333,7 +333,7 @@ Promise.all(ARQUIVOS.map(a => fetch(`dados/${a}.csv`).then(r => { if (!r.ok) thr
 /* =====================================================================
    1. CADA PONTO E UMA PESSOA (pontos que se reorganizam ao rolar)
    ===================================================================== */
-const CINZA = "#B9BFC9";
+const CINZA = "var(--cinza)";
 let passoAtual = 0, pontosEtapas = [], obsPassos = null;
 
 function etapasPontos(m) {
@@ -508,11 +508,14 @@ const PRECISAO = {
 let mapa = null, camadaPontos = null;
 const marcadores = new Map();
 
+/* as cores dos pontos vem do CSS, para acompanhar o modo claro ou escuro */
 function estiloTipo(t) {
-  if (t === "UBS") return { fillColor: "#00407D", color: "#fff", weight: 2 };
-  if (t === "UPA" || t === "Urgência") return { fillColor: "#FF6C4C", color: "#fff", weight: 2 };
-  if (t === "Cemitério" || t === "Outro") return { fillColor: "#B9BFC9", color: "#fff", weight: 2 };
-  return { fillColor: "#fff", color: "#00407D", weight: 3 };
+  const css = getComputedStyle(document.documentElement), cor = n => css.getPropertyValue(n).trim();
+  const fundo = cor("--superficie");
+  if (t === "UBS") return { fillColor: cor("--azul"), color: fundo, weight: 2 };
+  if (t === "UPA" || t === "Urgência") return { fillColor: cor("--coral"), color: fundo, weight: 2 };
+  if (t === "Cemitério" || t === "Outro") return { fillColor: cor("--cinza"), color: fundo, weight: 2 };
+  return { fillColor: fundo, color: cor("--azul"), weight: 3 };
 }
 
 function atualizarMapa(lista) {
@@ -543,6 +546,7 @@ function atualizarMapa(lista) {
       (r.endereco_contrato ? `<br>${esc(r.endereco_contrato)}` : "") +
       (temQtd ? `<br><b>${num(r.trabalhadores_por_unidade)}</b> trabalhadores terceirizados` : "") +
       `<br><small>${PRECISAO[r.precisao] || ""}</small>`);
+    mk.tipo = r.tipo;
     camadaPontos.addLayer(mk);
     marcadores.set(r.unidade, mk);
   });
@@ -600,3 +604,38 @@ function contar(raiz) {
   };
   requestAnimationFrame(passo);
 }
+
+/* =====================================================================
+   5. MODO CLARO / ESCURO
+   O modo inicial segue o do computador ou celular; a escolha da pessoa
+   fica guardada neste navegador.
+   ===================================================================== */
+(function () {
+  const raiz = document.documentElement;
+  const botao = document.getElementById("botao-modo");
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const ajustar = () => {
+    const escuro = raiz.dataset.modo === "escuro";
+    const txt = escuro ? "Ativar modo claro" : "Ativar modo escuro";
+    if (botao) { botao.setAttribute("aria-label", txt); botao.title = txt; }
+    if (meta) meta.content = escuro ? "#15223A" : "#FFFFFF";
+    marcadores.forEach(mk => mk.setStyle(estiloTipo(mk.tipo)));
+  };
+  const aplicar = modo => {
+    raiz.dataset.modo = modo;
+    try { localStorage.setItem("modo", modo); } catch (e) {}
+    ajustar();
+  };
+  if (botao) botao.addEventListener("click", () => {
+    const novo = raiz.dataset.modo === "escuro" ? "claro" : "escuro";
+    if (document.startViewTransition && !reduzirMovimento) document.startViewTransition(() => aplicar(novo));
+    else aplicar(novo);
+  });
+  /* se a pessoa ainda nao escolheu, acompanha a troca do sistema */
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+    let salvo = null;
+    try { salvo = localStorage.getItem("modo"); } catch (err) {}
+    if (!salvo) { raiz.dataset.modo = e.matches ? "escuro" : "claro"; ajustar(); }
+  });
+  ajustar();
+})();
