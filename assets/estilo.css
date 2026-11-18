@@ -210,7 +210,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 16px 56px; }
 /* lacunas: o rosa aparece so aqui, no icone */
 .lacunas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
 .lacuna { background: var(--superficie); border-radius: 12px; padding: 16px 18px; }
-.lacuna .icone { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: var(--rosa-claro); color: var(--rosa); margin-bottom: 10px; }
+.lacuna .icone { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--rosa-claro); color: var(--rosa); margin-bottom: 10px; }
 .lacuna h4 { margin: 0 0 4px; font-size: 15.5px; color: var(--azul); }
 .lacuna p { margin: 0; font-size: 13.5px; color: var(--texto-2); }
 
@@ -546,3 +546,55 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 16px 56px; }
 
 /* troca suave (navegadores sem a transicao de pagina trocam na hora) */
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }
+
+/* =====================================================================
+   INTERACOES EXTRAS
+   ===================================================================== */
+.dica-uso { display: flex; align-items: center; gap: 6px; }
+.dica-uso::before {
+  content: ""; flex: none; width: 16px; height: 16px; background: var(--coral);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 11V5.5a1.5 1.5 0 0 1 3 0V11'/%3E%3Cpath d='M12 10V8.5a1.5 1.5 0 0 1 3 0V11'/%3E%3Cpath d='M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14.6a1.5 1.5 0 0 1 2.5-1.7L9 16V11'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 11V5.5a1.5 1.5 0 0 1 3 0V11'/%3E%3Cpath d='M12 10V8.5a1.5 1.5 0 0 1 3 0V11'/%3E%3Cpath d='M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14.6a1.5 1.5 0 0 1 2.5-1.7L9 16V11'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* quadros que funcionam como botao */
+.mini-botao {
+  font: inherit; color: inherit; text-align: left; border: 0; cursor: pointer; width: 100%;
+  display: block; transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.mini-botao:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 2px var(--azul), 0 6px 18px rgba(0, 32, 64, .10) !important; }
+.mini-botao:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+.mini-botao[aria-pressed="true"] { background: var(--azul); }
+.mini-botao[aria-pressed="true"] b, .mini-botao[aria-pressed="true"] span { color: var(--sobre-azul) !important; }
+.mini-botao[aria-pressed="true"] b::before { box-shadow: 0 0 0 2px var(--sobre-azul); }
+.mini-botao.anel b::before { box-shadow: inset 0 0 0 2.5px var(--azul); }
+.mini-botao[aria-pressed="true"].anel b::before { box-shadow: inset 0 0 0 2.5px var(--azul), 0 0 0 2px var(--sobre-azul); }
+.mini-botao[aria-pressed="true"]::after { content: "filtrando"; display: block; margin-top: 4px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--sobre-azul); opacity: .8; }
+
+/* legenda do mapa tambem destaca */
+.legenda-mapa span { cursor: default; padding: 3px 8px; margin: -3px -8px; border-radius: 999px; transition: background .2s ease; }
+.legenda-mapa span:hover, .legenda-mapa span:focus-visible { background: var(--trilho); outline: none; }
+.mapa.destacando .leaflet-tile-pane { opacity: .7; }
+
+/* lista recolhida */
+.contagem-sum { font-weight: 500; color: var(--texto-3); }
+#det-unidades { margin-top: 14px; }
+#det-unidades .nota { margin-top: 10px; }
+
+/* filtro da tabela do contrato */
+.filtro-ativo { margin: 12px 0 0; font-size: 14px; color: var(--texto-2); }
+.link { font: inherit; font-weight: 600; color: var(--azul-texto); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+/* KPIs do topo levam para a parte do painel */
+a.kpi { display: block; text-decoration: none; color: inherit; transition: transform .2s ease, box-shadow .2s ease; position: relative; }
+a.kpi:hover, a.kpi:focus-visible { transform: translateY(-3px); box-shadow: inset 0 0 0 2px var(--azul), 0 10px 28px rgba(0, 32, 64, .14) !important; outline: none; }
+a.kpi .kpi-ir { position: absolute; right: 14px; top: 14px; width: 18px; height: 18px; color: var(--coral); opacity: 0; transform: translateX(-4px); transition: opacity .2s ease, transform .2s ease; }
+a.kpi:hover .kpi-ir, a.kpi:focus-visible .kpi-ir { opacity: 1; transform: none; }
+
+/* o que falta: icone proprio + selo */
+.lacuna-topo { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.lacuna .lacuna-topo .icone { margin-bottom: 0; flex: none; }
+.selo-falta { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--texto-3); border: 1px dashed var(--linha); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+.lacuna { transition: transform .2s ease; }
+.lacuna:hover { transform: translateY(-2px); }
+[data-modo="escuro"] .selo-falta { border-color: #3A4A66; }

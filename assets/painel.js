@@ -118,6 +118,7 @@ function renderKPIs(m) {
   const un = doMuni("unidades").filter(r => r.citada_na_resposta_sms === "sim");
   const ubs = un.filter(r => r.tipo === "UBS");
   const ubsRural = ubs.filter(r => r.zona === "Rural").length;
+  const DESTINO = ["#pontos", "#perfil", "#funcoes", "#unidades", "#contrato", "#contrato"];
   const cards = [
     [num(tot), "trabalhadores terceirizados", "na rede municipal de saúde", "var(--azul)"],
     [pct(fem, soma(sexo, "trabalhadores")), "são mulheres", `${num(fem)} de ${num(soma(sexo, "trabalhadores"))}`, "var(--azul)"],
@@ -126,8 +127,9 @@ function renderKPIs(m) {
     ["1", "empresa contratada", m.empresa, "var(--azul)"],
     [`R$ ${num(m.valor_anual_contrato_rs / 1e6, 1)} mi`, "por ano no contrato", reais(m.valor_anual_contrato_rs), "var(--azul)"],
   ];
-  document.getElementById("kpis").innerHTML = cards.map(([v, r, d, c]) =>
-    `<div class="kpi" style="--cor:${c}"><div class="kpi-valor">${esc(v)}</div><div class="kpi-rotulo">${esc(r)}</div><div class="kpi-detalhe">${esc(d)}</div></div>`).join("");
+  const SETA = `<svg class="kpi-ir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+  document.getElementById("kpis").innerHTML = cards.map(([v, r, d, c], i) =>
+    `<a class="kpi" href="${DESTINO[i]}" style="--cor:${c}">${SETA}<div class="kpi-valor">${esc(v)}</div><div class="kpi-rotulo">${esc(r)}</div><div class="kpi-detalhe">${esc(d)}</div></a>`).join("");
 }
 
 function renderSexo() {
@@ -197,8 +199,15 @@ function renderContrato() {
     ["Igual ao previsto", "var(--azul)"], ["Abaixo do previsto", "var(--coral)"],
     ["Previsto no contrato, nenhum trabalhador informado", "var(--rosa)"], ["Acima do previsto", "var(--texto-3)"],
   ];
-  document.getElementById("situacoes").innerHTML = sit.map(([s, c]) =>
-    `<div class="mini" style="--cor:${c}"><b>${cont(s)}</b><span>${SELO[s][1].toLowerCase().replace(/^./, x => x.toUpperCase())} (itens do contrato)</span></div>`).join("");
+  filtroSit = null;
+  const caixa = document.getElementById("situacoes");
+  caixa.innerHTML = sit.map(([s, c]) =>
+    `<button type="button" class="mini mini-botao" aria-pressed="false" data-sit="${esc(s)}" style="--cor:${c}"><b>${cont(s)}</b><span>${SELO[s][1].toLowerCase().replace(/^./, x => x.toUpperCase())} (itens do contrato)</span></button>`).join("");
+  caixa.onclick = e => {
+    const b = e.target.closest("[data-sit]");
+    if (!b) return;
+    filtrarContrato(filtroSit === b.dataset.sit ? null : b.dataset.sit, true);
+  };
 
   // halteres por funcao
   const fx = new Map();
@@ -221,20 +230,56 @@ function renderContrato() {
     <div></div><div class="eixo">${grades.map(t => `<span style="left:${x(t)}%">${num(t)}</span>`).join("")}</div>
   </div>`;
 
+  filtrarContrato(null);
+}
+
+/* tabela item a item, com filtro pela situacao (clique nos quadros acima) */
+let filtroSit = null;
+function filtrarContrato(sit, abrir) {
+  filtroSit = sit;
+  const comp = doMuni("contratado_x_alocado");
+  const lista = [...comp].filter(r => !sit || r.situacao === sit).sort((a, b) => a.item - b.item);
+  document.querySelectorAll("#situacoes [data-sit]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.sit === sit)));
+  document.getElementById("filtro-contrato").innerHTML = sit
+    ? `<p class="filtro-ativo">Mostrando só ${lista.length} ${lista.length === 1 ? "item" : "itens"}: <b>${esc(SELO[sit][1].toLowerCase())}</b>. <button type="button" class="link" id="limpar-contrato">Mostrar todos os ${comp.length}</button></p>`
+    : "";
+  const limpar = document.getElementById("limpar-contrato");
+  if (limpar) limpar.onclick = () => filtrarContrato(null);
   document.getElementById("tab-contrato").innerHTML = tabela([
     { t: "Item", k: "item", num: 1 }, { t: "Função", k: "funcao" }, { t: "Regime", k: "regime" },
     { t: "Postos/mês", f: r => num(r.postos_por_mes), num: 1 }, { t: "Informados", k: "trabalhadores", num: 1 },
     { t: "Situação", html: r => selo(r.situacao) }, { t: "Custo mensal por posto", f: r => reais(r.valor_unitario_mensal_rs), num: 1 },
-  ], [...comp].sort((a, b) => a.item - b.item));
+  ], lista);
+  if (abrir) {
+    const det = document.getElementById("det-contrato");
+    det.open = true;
+    det.scrollIntoView({ behavior: reduzirMovimento ? "auto" : "smooth", block: "start" });
+  }
 }
 
 function renderUnidades() {
   const u = doMuni("unidades");
   const sms = u.filter(r => r.citada_na_resposta_sms === "sim");
   const contaTipo = agrupar(sms.map(r => ({ ...r, um: 1 })), "tipo", "um").sort((a, b) => b.val - a.val);
-  document.getElementById("tipos-unidade").innerHTML =
-    contaTipo.map(t => `<div class="mini"><b>${t.val}</b><span>${esc(t.rot)}</span></div>`).join("") +
-    `<div class="mini" style="--cor:var(--coral)"><b>${sms.filter(r => r.zona === "Rural").length}</b><span>na zona rural</span></div>`;
+  const corGrupo = { ubs: "var(--azul)", upa: "var(--coral)", esp: "var(--superficie)", outro: "var(--cinza)" };
+  const caixa = document.getElementById("tipos-unidade");
+  caixa.innerHTML =
+    contaTipo.map(t => `<button type="button" class="mini mini-botao${grupoTipo(t.rot) === "esp" ? " anel" : ""}" aria-pressed="false" data-campo="tipo" data-valor="${esc(t.rot)}" style="--cor:${corGrupo[grupoTipo(t.rot)]}"><b>${t.val}</b><span>${esc(t.rot)}</span></button>`).join("") +
+    `<button type="button" class="mini mini-botao" aria-pressed="false" data-campo="zona" data-valor="Rural" style="--cor:var(--areia)"><b>${sms.filter(r => r.zona === "Rural").length}</b><span>na zona rural</span></button>`;
+  const regra = b => b.dataset.campo === "zona" ? r => r.zona === b.dataset.valor : r => r.tipo === b.dataset.valor;
+  caixa.onmouseover = caixa.onfocusin = e => { const b = e.target.closest(".mini-botao"); if (b) destacarNoMapa(regra(b)); };
+  caixa.onmouseleave = caixa.onfocusout = () => destacarNoMapa(null);
+  caixa.onclick = e => {
+    const b = e.target.closest(".mini-botao");
+    if (!b) return;
+    const sel = document.getElementById(b.dataset.campo === "zona" ? "filtro-zona" : "filtro-tipo");
+    sel.value = sel.value === b.dataset.valor ? "" : b.dataset.valor;
+    filtrarUnidades();
+    destacarNoMapa(null);
+  };
+  const leg = document.getElementById("legenda-mapa");
+  leg.onmouseover = leg.onfocusin = e => { const s = e.target.closest("[data-grupo]"); if (s) destacarNoMapa(r => grupoTipo(r.tipo) === s.dataset.grupo); };
+  leg.onmouseleave = leg.onfocusout = () => destacarNoMapa(null);
 
   const selTipo = document.getElementById("filtro-tipo");
   const tipos = [...new Set(u.map(r => r.tipo))].sort();
@@ -250,7 +295,9 @@ function filtrarUnidades() {
   const lista = base.filter(r =>
     (!tipo || r.tipo === tipo) && (!zona || r.zona === zona) && (!soSms || r.citada_na_resposta_sms === "sim") &&
     (!termo || `${r.unidade} ${r.endereco_contrato} ${r.nome_no_contrato}`.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(termo)));
-  document.getElementById("contagem-unidades").textContent = `${lista.length} de ${base.length} locais`;
+  document.getElementById("contagem-unidades").textContent = `(${lista.length} de ${base.length} locais)`;
+  document.querySelectorAll("#tipos-unidade .mini-botao").forEach(b =>
+    b.setAttribute("aria-pressed", String((b.dataset.campo === "zona" ? zona : tipo) === b.dataset.valor)));
   document.getElementById("tab-unidades").outerHTML = tabela([
     { t: "Unidade", html: r => (typeof r.lat === "number" ? PINO : "") + esc(r.unidade) + (r.citada_na_resposta_sms === "não" ? ` <span class="selo">só no contrato</span>` : "") },
     { t: "Tipo", k: "tipo" }, { t: "Zona", k: "zona" },
@@ -271,9 +318,8 @@ function filtrarUnidades() {
 
 function renderLacunas() {
   const c = doMuni("campos_disponiveis").filter(r => /^Não|^Só a lista/.test(r.disponivel));
-  const icone = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`;
   document.getElementById("lista-lacunas").innerHTML = c.map(r =>
-    `<div class="lacuna"><div class="icone">${icone}</div><h4>${esc(r.campo)}</h4><p>${esc(r.disponivel === "Só a lista" ? "Veio só a lista de unidades, sem quantos trabalham em cada uma." : r.detalhe.replace(/^Idem$/, "Não foi fornecido pela Prefeitura."))}</p></div>`).join("");
+    `<div class="lacuna"><div class="lacuna-topo"><div class="icone">${iconeLacuna(r.campo)}</div><span class="selo-falta">não informado</span></div><h4>${esc(r.campo)}</h4><p>${esc(r.disponivel === "Só a lista" ? "Veio só a lista de unidades, sem quantos trabalham em cada uma." : r.detalhe.replace(/^Idem$/, "Não foi fornecido pela Prefeitura."))}</p></div>`).join("");
 }
 
 function renderMetodo() {
@@ -546,7 +592,7 @@ function atualizarMapa(lista) {
       (r.endereco_contrato ? `<br>${esc(r.endereco_contrato)}` : "") +
       (temQtd ? `<br><b>${num(r.trabalhadores_por_unidade)}</b> trabalhadores terceirizados` : "") +
       `<br><small>${PRECISAO[r.precisao] || ""}</small>`);
-    mk.tipo = r.tipo;
+    mk.tipo = r.tipo; mk.dados = r; mk.fo = temQtd ? 0.75 : 1;
     camadaPontos.addLayer(mk);
     marcadores.set(r.unidade, mk);
   });
@@ -579,7 +625,7 @@ function prepararRevelar() {
     e.target.classList.add("visivel");
     if (e.target.matches(".kpi, .destaque")) contar(e.target);
     obsRevelar.unobserve(e.target);
-  }), { threshold: 0.12 });
+  }), { threshold: 0, rootMargin: "0px 0px -8% 0px" });
   document.querySelectorAll(".secao-cab, .cartao, .kpi, .mini, .lacuna, .destaque, .aviso").forEach(el => {
     if (el.classList.contains("revelar")) return;
     el.classList.add("revelar");
@@ -619,7 +665,7 @@ function contar(raiz) {
     const txt = escuro ? "Ativar modo claro" : "Ativar modo escuro";
     if (botao) { botao.setAttribute("aria-label", txt); botao.title = txt; }
     if (meta) meta.content = escuro ? "#15223A" : "#FFFFFF";
-    marcadores.forEach(mk => mk.setStyle(estiloTipo(mk.tipo)));
+    destacarNoMapa(null);
   };
   const aplicar = modo => {
     raiz.dataset.modo = modo;
@@ -639,3 +685,40 @@ function contar(raiz) {
   });
   ajustar();
 })();
+
+/* =====================================================================
+   6. INTERACOES EXTRAS
+   ===================================================================== */
+/* grupo de cor de cada tipo de unidade (o mesmo da legenda do mapa) */
+function grupoTipo(t) {
+  if (t === "UBS") return "ubs";
+  if (t === "UPA" || t === "Urgência") return "upa";
+  if (t === "Cemitério" || t === "Outro") return "outro";
+  return "esp";
+}
+
+/* acende no mapa so as unidades que passam no teste; null volta ao normal */
+function destacarNoMapa(teste) {
+  marcadores.forEach(mk => {
+    const liga = !teste || teste(mk.dados);
+    mk.setStyle({ ...estiloTipo(mk.tipo), opacity: liga ? 1 : 0.15, fillOpacity: liga ? mk.fo : 0.1 });
+    if (teste && liga) mk.bringToFront();
+  });
+  const el = document.getElementById("mapa");
+  if (el) el.classList.toggle("destacando", !!teste);
+}
+
+/* icones simples, um para cada dado que faltou */
+const ICONES_LACUNA = [
+  [/ra[çc]a|cor/i, '<circle cx="9" cy="8" r="3.2"/><circle cx="16.5" cy="9.5" r="2.6"/><path d="M3.5 20c0-3.3 2.5-5.6 5.5-5.6s5.5 2.3 5.5 5.6"/><path d="M14.8 14.6c.5-.1 1.1-.2 1.7-.2 2.5 0 4.5 1.9 4.5 4.6"/>'],
+  [/escolar/i, '<path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.6c0 1.4 2.5 3 5.5 3s5.5-1.6 5.5-3V11"/><path d="M21.5 9v5"/>'],
+  [/defici/i, '<circle cx="11" cy="4.5" r="1.8"/><path d="M11 7.5v6h5.5l2.5 5.5"/><path d="M11 10.5h5"/><path d="M8.2 11.4a5.5 5.5 0 1 0 7.6 6.3"/>'],
+  [/lota|unidade/i, '<path d="M4 21V8.5L12 4l8 4.5V21"/><path d="M2.5 21h19"/><path d="M12 9v5M9.5 11.5h5"/><path d="M10 21v-3.5h4V21"/>'],
+  [/sal[áa]ri/i, '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v5M18 9.5v5"/>'],
+  [/benef/i, '<rect x="3" y="9" width="18" height="4" rx="1"/><path d="M5 13v7.5h14V13"/><path d="M12 9v11.5"/><path d="M12 9c-1.6-3.6-5.5-4.2-5.5-1.6 0 1.6 2.6 1.6 5.5 1.6zM12 9c1.6-3.6 5.5-4.2 5.5-1.6 0 1.6-2.6 1.6-5.5 1.6z"/>'],
+];
+function iconeLacuna(campo) {
+  const achado = ICONES_LACUNA.find(([re]) => re.test(campo));
+  const corpo = achado ? achado[1] : '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
+  return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${corpo}</svg>`;
+}
