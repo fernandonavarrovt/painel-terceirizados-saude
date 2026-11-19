@@ -14,6 +14,7 @@
       try { m = localStorage.getItem("modo"); } catch (e) {}
       if (m !== "claro" && m !== "escuro") m = matchMedia("(prefers-color-scheme: dark)").matches ? "escuro" : "claro";
       document.documentElement.setAttribute("data-modo", m);
+      if (!new URLSearchParams(location.search).get("municipio")) document.documentElement.classList.add("na-capa");
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,9 +25,38 @@
 </head>
 <body>
 
+<section class="capa" id="capa" aria-label="Capa do painel">
+  <div class="capa-fundo" aria-hidden="true">
+    <span class="forma f-anel"></span><span class="forma f-meia"></span><span class="forma f-ponto"></span>
+    <svg class="capa-pontos" id="capa-pontos"></svg>
+  </div>
+  <div class="capa-in">
+    <div class="capa-topo">
+      <img src="assets/logo-odss-branca.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="capa-logo">
+      <button type="button" class="botao-modo" aria-label="Ativar modo escuro" title="Ativar modo escuro">
+      <svg class="i-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+      <svg class="i-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+      </button>
+    </div>
+    <div class="capa-corpo">
+      <p class="capa-sobre">Painel de transparência</p>
+      <h1 class="capa-titulo">Quer entender <em>quem são</em>, <em>o que fazem</em> e <em>onde trabalham</em> os trabalhadores terceirizados da saúde no Rio Grande do Norte?</h1>
+      <p class="capa-texto">Dados públicos, obtidos pela Lei de Acesso à Informação e organizados pelo ODSS. Escolha o município e o contrato para começar.</p>
+      <div class="capa-escolha">
+        <div class="campo"><span class="campo-rot" id="rot-muni">Município</span><div id="esc-muni"></div></div>
+        <div class="campo"><span class="campo-rot" id="rot-contrato">Contrato</span><div id="esc-contrato"></div></div>
+        <button type="button" class="botao-entrar" id="botao-entrar">Ver os dados <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+      <p class="capa-erro" id="capa-erro" hidden></p>
+    </div>
+    <p class="capa-rodape">Observatório dos Direitos Sociais do Semiárido (ODSS) · UFERSA</p>
+  </div>
+</section>
+
 <header class="topo">
   <div class="topo-in">
-    <a href="#" class="marca"><img src="assets/logo-odss.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo logo-claro"><img src="assets/logo-odss-branca.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo logo-escuro"></a>
+    <a href="./" class="marca" title="Voltar para a capa"><img src="assets/logo-odss.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo logo-claro"><img src="assets/logo-odss-branca.png" alt="ODSS, Observatório dos Direitos Sociais do Semiárido" class="logo logo-escuro"></a>
+    <div class="menu-caixa">
     <nav class="menu" aria-label="Seções do painel">
       <a href="#pontos">Em pontos</a>
       <a href="#perfil">Quem são</a>
@@ -36,6 +66,8 @@
       <a href="#lacunas">O que falta</a>
       <a href="#metodo">Os dados</a>
     </nav>
+    <div class="menu-trilho" aria-hidden="true"><span></span></div>
+    </div>
     <button type="button" class="botao-modo" id="botao-modo" aria-label="Ativar modo escuro" title="Ativar modo escuro">
       <svg class="i-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
       <svg class="i-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
@@ -48,8 +80,8 @@
   <h1><span>Terceirizados</span> <span class="tit-2">da saúde</span></h1>
   <p class="subtitulo">Quem são, o que fazem e onde trabalham as pessoas contratadas por empresas para as redes públicas municipais de saúde do Rio Grande do Norte.</p>
   <div class="topo-controles">
-    <label for="sel-municipio">Município</label>
-    <select id="sel-municipio"></select>
+    <span class="local"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22s-7-6.2-7-11.6a7 7 0 0 1 14 0C19 15.8 12 22 12 22z"/><circle cx="12" cy="10" r="2.6" fill="var(--azul)"/></svg><b id="hero-muni"></b><span class="sep">·</span><span id="hero-contrato"></span></span>
+    <span class="trocas"><span id="troca-muni"></span><span id="troca-contrato"></span></span>
     <span class="fonte-curta" id="fonte-curta"></span>
   </div>
 </section>
@@ -61,16 +93,26 @@
     <div class="kpis" id="kpis"></div>
   </section>
 
-  <section id="pontos" class="secao">
-    <div class="secao-cab">
-      <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="2.2"/><circle cx="12" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="12" cy="18" r="2.2"/></svg></span>Cada ponto é uma pessoa</h2>
-      <p>Role a tela devagar. Os pontos se reorganizam para mostrar quem são essas pessoas.</p>
-    </div>
-    <div class="historia">
-      <div class="historia-grafico">
-        <div class="pontos-caixa"><svg id="svg-pontos" role="img" aria-label="Gráfico de pontos: cada ponto é um trabalhador terceirizado"><g class="rotulos"></g></svg></div>
+  <section id="pontos" class="secao secao-historia">
+    <div class="historia" id="historia">
+      <div class="palco" id="palco">
+        <div class="secao-cab palco-cab">
+          <h2><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="2.2"/><circle cx="12" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="12" cy="18" r="2.2"/></svg></span>Cada ponto é uma pessoa</h2>
+          <p>Role a tela: a cada movimento, os pontos se reorganizam para mostrar quem são essas pessoas.</p>
+        </div>
+        <div class="palco-corpo">
+          <div class="pontos-caixa"><svg id="svg-pontos" role="img" aria-label="Gráfico de pontos: cada ponto é um trabalhador terceirizado"><g class="rotulos"></g></svg></div>
+          <div class="palco-texto">
+            <div class="progresso" id="progresso"></div>
+            <div class="cartoes" id="passos" aria-live="polite"></div>
+            <div class="palco-nav">
+              <button type="button" class="nav-passo" id="passo-ant" aria-label="Etapa anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+              <span class="palco-dica" id="palco-dica">Role a tela para ver a próxima</span>
+              <button type="button" class="nav-passo" id="passo-prox" aria-label="Próxima etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="historia-passos" id="passos"></div>
     </div>
     <p class="nota">Os dados vieram somados, sem informação por pessoa. Por isso, a cada etapa os pontos se misturam de novo: a cor de uma etapa não continua na seguinte. Assim o gráfico não sugere, por exemplo, quais mulheres são motoristas.</p>
   </section>
@@ -121,7 +163,7 @@
     <article class="cartao">
       <h3>As vagas do contrato, uma a uma</h3>
       <p class="nota nota-topo">Cada quadradinho é um posto de trabalho previsto por mês no contrato. Os azuis têm alguém trabalhando; os vazios, não. Passe o mouse (ou toque) para ver a função.</p>
-      <div class="vagas" id="vagas" aria-describedby="legenda-vagas"></div>
+      <div class="vagas" id="vagas" data-dica-area aria-describedby="legenda-vagas"></div>
       <div class="legenda" id="legenda-vagas"></div>
     </article>
     <article class="cartao">

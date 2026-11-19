@@ -8,6 +8,7 @@ const ARQUIVOS = [
   "limitacoes", "campos_disponiveis",
 ];
 const D = {};
+const raiz = document.documentElement;
 let muni = null;
 let vistaFuncoes = "funcao";
 
@@ -57,17 +58,24 @@ function passoBonito(max, alvo = 4) {
 
 /* ---------------- dica (tooltip) ---------------- */
 const dica = document.getElementById("dica");
+let dicaAtual = "";
 function mostrarDica(html, x, y) {
-  dica.innerHTML = html; dica.hidden = false;
+  if (html !== dicaAtual) { dica.innerHTML = html; dicaAtual = html; }
+  dica.hidden = false;
   const r = dica.getBoundingClientRect();
-  let left = x + 14, top = y + 14;
-  if (left + r.width > innerWidth - 8) left = x - r.width - 14;
-  if (top + r.height > innerHeight - 8) top = y - r.height - 14;
+  let left = x + 16, top = y + 16;
+  if (left + r.width > innerWidth - 8) left = x - r.width - 16;
+  if (top + r.height > innerHeight - 8) top = y - r.height - 16;
   dica.style.left = Math.max(8, left) + "px"; dica.style.top = Math.max(8, top) + "px";
 }
+function esconderDica() { dica.hidden = true; dicaAtual = ""; }
+/* dentro de uma "area" (grade de vagas, colunas, barras) a dica nao some
+   quando o mouse passa pelos espacos entre os itens */
 document.addEventListener("mousemove", e => {
   const alvo = e.target.closest("[data-dica]");
-  if (alvo) mostrarDica(alvo.dataset.dica, e.clientX, e.clientY); else dica.hidden = true;
+  if (alvo) mostrarDica(alvo.dataset.dica, e.clientX, e.clientY);
+  else if (dicaAtual && e.target.closest("[data-dica-area]")) mostrarDica(dicaAtual, e.clientX, e.clientY);
+  else if (!dica.hidden) esconderDica();
 });
 document.addEventListener("focusin", e => {
   const alvo = e.target.closest("[data-dica]");
@@ -75,15 +83,38 @@ document.addEventListener("focusin", e => {
   const r = alvo.getBoundingClientRect();
   mostrarDica(alvo.dataset.dica, r.left + r.width / 2, r.bottom);
 });
-document.addEventListener("focusout", () => { dica.hidden = true; });
-document.addEventListener("scroll", () => { dica.hidden = true; }, { passive: true });
+document.addEventListener("focusout", esconderDica);
+document.addEventListener("scroll", esconderDica, { passive: true });
+
+/* conteudo padronizado das dicas: titulo, numero grande, linhas com a marca do grafico */
+const dTit = t => `<div class="d-tit">${t}</div>`;
+const dNum = (n, txt) => `<div class="d-num"><b>${n}</b><span>${txt}</span></div>`;
+const dLinha = (marca, rot, val, cor) => `<div class="d-linha"><i class="d-m ${marca}"></i><span>${rot}</span><b class="d-v ${cor}">${val}</b></div>`;
+const dRod = (txt, tipo) => `<div class="d-rod ${tipo}">${txt}</div>`;
+const dExtra = t => `<div class="d-extra">${t}</div>`;
+
+function dicaHalter(l) {
+  const dif = l.prev - l.inf;
+  return dTit(esc(l.f)) +
+    dLinha("anel", "Postos previstos por mês", num(l.prev), "azul") +
+    dLinha("ponto", "Trabalhadores informados", num(l.inf), "coral") +
+    dRod(dif === 0 ? "Igual ao previsto" : dif > 0 ? `${num(dif)} ${dif === 1 ? "posto" : "postos"} sem ninguém` : `${num(-dif)} a mais que o previsto`,
+      dif > 0 ? "falta" : dif < 0 ? "sobra" : "ok");
+}
+function dicaVaga(l) {
+  return dTit(esc(l.f)) +
+    dLinha("q-cheio", "Postos com trabalhador", num(Math.min(l.inf, l.prev)), "azul") +
+    dLinha("q-vazio", "Postos sem ninguém", num(Math.max(0, l.prev - l.inf)), "coral") +
+    (l.inf > l.prev ? dRod(`${num(l.inf - l.prev)} a mais que o previsto`, "sobra") : "") +
+    dExtra(`${num(l.prev)} ${l.prev === 1 ? "posto previsto" : "postos previstos"} por mês no contrato`);
+}
 
 /* ---------------- componentes ---------------- */
 function barrasH(el, linhas, total) {
   const max = Math.max(...linhas.map(l => l.val), 1);
-  el.innerHTML = `<div class="barras-h">${linhas.map(l => `
+  el.innerHTML = `<div class="barras-h" data-dica-area>${linhas.map(l => `
       <div class="rot">${esc(l.rot)}${l.sub ? `<small>${esc(l.sub)}</small>` : ""}</div>
-      <div class="trilho" tabindex="0" data-dica="${esc(`<b>${esc(l.rot)}</b><br>${num(l.val)} trabalhadores${total ? ` (${pct(l.val, total)})` : ""}${l.extra ? "<br>" + l.extra : ""}`)}">
+      <div class="trilho" tabindex="0" data-dica="${esc(dTit(esc(l.rot)) + dNum(num(l.val), `trabalhadores${total ? ` · ${pct(l.val, total)}` : ""}`) + (l.extra ? dExtra(l.extra) : ""))}">
         <div class="barra" style="width:${l.val / max * 85}%"></div>
         <span class="val">${num(l.val)}</span>
       </div>`).join("")}</div>`;
@@ -105,6 +136,8 @@ const selo = s => { const [c, t] = SELO[s] || ["", s]; return `<span class="selo
 
 /* ---------------- secoes ---------------- */
 function renderCabecalho(m) {
+  document.getElementById("hero-muni").textContent = `${m.municipio}/${m.uf}`;
+  document.getElementById("hero-contrato").textContent = nomeContrato(m);
   document.getElementById("fonte-curta").textContent = `Dados de ${m.data_resposta}, obtidos pela Lei de Acesso à Informação`;
   document.getElementById("texto-fonte").innerHTML =
     `Fonte: ${esc(m.fonte)}, de ${esc(m.data_resposta)}. Contrato: ${esc(m.contrato)}, com a ${esc(m.empresa)}, serviços desde ${esc(m.inicio_servicos)}. Os números foram copiados do documento oficial e conferidos pelo ODSS.`;
@@ -129,31 +162,64 @@ function renderKPIs(m) {
   ];
   const SETA = `<svg class="kpi-ir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
   document.getElementById("kpis").innerHTML = cards.map(([v, r, d, c], i) =>
-    `<a class="kpi" href="${DESTINO[i]}" style="--cor:${c}">${SETA}<div class="kpi-valor">${esc(v)}</div><div class="kpi-rotulo">${esc(r)}</div><div class="kpi-detalhe">${esc(d)}</div></a>`).join("");
+    `<a class="kpi" href="${DESTINO[i]}" style="--cor:${c}">${SETA}<div class="kpi-valor">${v.startsWith("R$ ") ? `<small class="kpi-pre">R$</small>${esc(v.slice(3))}` : esc(v)}</div><div class="kpi-rotulo">${esc(r)}</div><div class="kpi-detalhe">${esc(d)}</div></a>`).join("");
 }
 
+/* sexo: grafico de rosca (pizza com furo), com o total no meio */
 function renderSexo() {
   const s = doMuni("perfil_sexo"), tot = soma(s, "trabalhadores");
   const cores = ["var(--serie-1)", "var(--serie-2)"];
+  const R = 70, C = 2 * Math.PI * R, folga = s.length > 1 ? 3 : 0;
+  let acum = 0;
+  const arcos = s.map((r, i) => {
+    const len = r.trabalhadores / tot * C;
+    const a = `<circle class="arco" r="${R}" cx="95" cy="95" tabindex="0" style="stroke:${cores[i]};--len:${Math.max(0, len - folga).toFixed(2)};--c:${C.toFixed(2)}" stroke-dashoffset="${(-acum).toFixed(2)}"
+      data-dica="${esc(dTit(esc(r.sexo)) + dNum(num(r.trabalhadores), `trabalhadores · ${pct(r.trabalhadores, tot)}`))}"></circle>`;
+    acum += len;
+    return a;
+  }).join("");
   document.getElementById("graf-sexo").innerHTML = `
-    <div class="empilhada">${s.map((r, i) => `<div tabindex="0" style="flex:${r.trabalhadores};background:${cores[i]}"
-        data-dica="${esc(`<b>${esc(r.sexo)}</b><br>${num(r.trabalhadores)} trabalhadores (${pct(r.trabalhadores, tot)})`)}">${pct(r.trabalhadores, tot, 0)}</div>`).join("")}</div>
-    <div class="legenda-emp">${s.map((r, i) => `<span><i class="quadradinho" style="background:${cores[i]}"></i>${esc(r.sexo)}: <b>${num(r.trabalhadores)}</b></span>`).join("")}</div>
+    <div class="rosca-caixa" data-dica-area>
+      <svg class="rosca" viewBox="0 0 190 190" role="img" aria-label="${esc(s.map(r => `${r.sexo}: ${num(r.trabalhadores)} (${pct(r.trabalhadores, tot)})`).join("; "))}">
+        <g transform="rotate(-90 95 95)">${arcos}</g>
+        <text class="rosca-num" x="95" y="96">${num(tot)}</text><text class="rosca-rot" x="95" y="118">pessoas</text>
+      </svg>
+      <ul class="rosca-leg">${s.map((r, i) => `<li><i style="background:${cores[i]}"></i><div><span class="rl-nome">${esc(r.sexo)}</span><b class="rl-pct">${pct(r.trabalhadores, tot)}</b><span class="rl-n">${num(r.trabalhadores)} pessoas</span></div></li>`).join("")}</ul>
+    </div>
     ${detalhesTabela([{ t: "Sexo", k: "sexo" }, { t: "Trabalhadores", k: "trabalhadores", num: 1 }, { t: "%", f: r => pct(r.trabalhadores, tot), num: 1 }], s)}`;
 }
 
+/* faixa etaria: colunas com eixo e linhas de grade pontilhadas bem discretas */
 function renderIdade(m) {
   const f = doMuni("perfil_faixa_etaria"), tot = soma(f, "trabalhadores");
   const max = Math.max(...f.map(r => r.trabalhadores));
+  const { passo, topo } = passoBonito(max * 1.12);
+  const marcas = [];
+  for (let t = 0; t <= topo + 0.001; t += passo) marcas.push(t);
   document.getElementById("graf-idade").innerHTML = `
-    <div class="colunas">${f.map(r => `<div class="coluna" tabindex="0" data-dica="${esc(`<b>${esc(r.faixa_etaria)}</b><br>${num(r.trabalhadores)} trabalhadores (${pct(r.trabalhadores, tot)})`)}">
-      <span class="val">${num(r.trabalhadores)}</span><div class="barra" style="height:${r.trabalhadores / max * 82}%"></div></div>`).join("")}</div>
-    <div class="colunas-rot">${f.map(r => `<span>${esc(r.faixa_etaria.replace(" anos", ""))}</span>`).join("")}</div>
+    <div class="colunas-area">
+      <div class="colunas" data-dica-area>
+        <div class="grade-y" aria-hidden="true">${marcas.map(t => `<div class="gy${t === 0 ? " zero" : ""}" style="bottom:${t / topo * 100}%"><span>${num(t)}</span></div>`).join("")}</div>
+        ${f.map(r => `<div class="coluna" tabindex="0" data-dica="${esc(dTit(esc(r.faixa_etaria)) + dNum(num(r.trabalhadores), `trabalhadores · ${pct(r.trabalhadores, tot)}`))}">
+          <span class="val">${num(r.trabalhadores)}</span><div class="barra" style="height:${r.trabalhadores / topo * 100}%"></div></div>`).join("")}
+      </div>
+      <div class="colunas-rot">${f.map(r => `<span>${esc(r.faixa_etaria.replace(" anos", ""))}</span>`).join("")}</div>
+    </div>
     ${detalhesTabela([{ t: "Faixa", k: "faixa_etaria" }, { t: "Trabalhadores", k: "trabalhadores", num: 1 }, { t: "%", f: r => pct(r.trabalhadores, tot), num: 1 }], f)}`;
   const dif = m.total_trabalhadores - tot;
   document.getElementById("nota-idade").textContent = dif
     ? `Idade em anos. As faixas somam ${num(tot)}, ${num(Math.abs(dif))} a ${dif > 0 ? "menos" : "mais"} que o total informado (${num(m.total_trabalhadores)}).`
     : "Idade em anos.";
+}
+
+/* numeros do topo: todos do mesmo tamanho, o maior que couber no quadro */
+function ajustarKPIs() {
+  const vals = [...document.querySelectorAll(".kpi-valor")];
+  if (!vals.length || !vals[0].clientWidth) return;
+  vals.forEach(v => { v.style.fontSize = ""; });
+  let tam = parseFloat(getComputedStyle(vals[0]).fontSize);
+  const cabe = () => vals.every(v => v.scrollWidth <= v.clientWidth + 1);
+  while (!cabe() && tam > 16) { tam -= 1; vals.forEach(v => { v.style.fontSize = tam + "px"; }); }
 }
 
 const ORDEM_JORNADA = ["40h", "30h", "12x36 diurno", "12x36 noturno", "12x36", "24x96"];
@@ -220,9 +286,9 @@ function renderContrato() {
   const x = v => v / topo * 100;
   const grades = [];
   for (let t = 0; t <= topo; t += passo) grades.push(t);
-  document.getElementById("graf-halteres").innerHTML = `<div class="halteres">
+  document.getElementById("graf-halteres").innerHTML = `<div class="halteres" data-dica-area>
     ${linhas.map(l => `<div class="rot">${esc(l.f)}</div>
-      <div class="pista" tabindex="0" data-dica="${esc(`<b>${esc(l.f)}</b><br>Postos previstos: ${num(l.prev)} por mês<br>Trabalhadores informados: ${num(l.inf)}<br>${l.inf === l.prev ? "Igual ao previsto" : l.inf < l.prev ? `${num(l.prev - l.inf)} a menos que o previsto` : `${num(l.inf - l.prev)} a mais que o previsto`}`)}">
+      <div class="pista" tabindex="0" data-dica="${esc(dicaHalter(l))}">
         ${grades.map(t => `<i class="grade" style="left:${x(t)}%"></i>`).join("")}
         <i class="liga" style="left:${x(Math.min(l.prev, l.inf))}%;width:${x(Math.abs(l.prev - l.inf))}%"></i>
         <i class="p p1" style="left:${x(l.prev)}%"></i><i class="p p2" style="left:${x(l.inf)}%"></i>
@@ -253,6 +319,7 @@ function filtrarContrato(sit, abrir) {
   if (abrir) {
     const det = document.getElementById("det-contrato");
     det.open = true;
+    marcarNavegacao();
     det.scrollIntoView({ behavior: reduzirMovimento ? "auto" : "smooth", block: "start" });
   }
 }
@@ -272,8 +339,10 @@ function renderUnidades() {
   caixa.onclick = e => {
     const b = e.target.closest(".mini-botao");
     if (!b) return;
-    const sel = document.getElementById(b.dataset.campo === "zona" ? "filtro-zona" : "filtro-tipo");
-    sel.value = sel.value === b.dataset.valor ? "" : b.dataset.valor;
+    const ligado = b.getAttribute("aria-pressed") === "true";
+    document.getElementById("filtro-tipo").value = "";
+    document.getElementById("filtro-zona").value = "";
+    if (!ligado) document.getElementById(b.dataset.campo === "zona" ? "filtro-zona" : "filtro-tipo").value = b.dataset.valor;
     filtrarUnidades();
     destacarNoMapa(null);
   };
@@ -297,7 +366,7 @@ function filtrarUnidades() {
     (!termo || `${r.unidade} ${r.endereco_contrato} ${r.nome_no_contrato}`.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").includes(termo)));
   document.getElementById("contagem-unidades").textContent = `(${lista.length} de ${base.length} locais)`;
   document.querySelectorAll("#tipos-unidade .mini-botao").forEach(b =>
-    b.setAttribute("aria-pressed", String((b.dataset.campo === "zona" ? zona : tipo) === b.dataset.valor)));
+    b.setAttribute("aria-pressed", String(b.dataset.campo === "zona" ? zona === b.dataset.valor && !tipo : tipo === b.dataset.valor && !zona)));
   document.getElementById("tab-unidades").outerHTML = tabela([
     { t: "Unidade", html: r => (typeof r.lat === "number" ? PINO : "") + esc(r.unidade) + (r.citada_na_resposta_sms === "não" ? ` <span class="selo">só no contrato</span>` : "") },
     { t: "Tipo", k: "tipo" }, { t: "Zona", k: "zona" },
@@ -316,10 +385,56 @@ function filtrarUnidades() {
   atualizarMapa(lista);
 }
 
-function renderLacunas() {
+/* texto extra ("saiba mais") de cada dado que faltou */
+function saibaMaisLacuna(campo, m) {
+  const n = m.total_trabalhadores;
+  if (/defici/i.test(campo)) {
+    const cota = n < 100 ? 0 : n <= 200 ? 2 : n <= 500 ? 3 : n <= 1000 ? 4 : 5;
+    return `<p>Empresas com 100 ou mais empregados têm de reservar de 2% a 5% das vagas para pessoas com deficiência ou reabilitadas pelo INSS (Lei 8.213/1991, art. 93).</p>` +
+      (cota ? `<p>Só neste contrato são <b>${num(n)} trabalhadores</b>. Se esse fosse o total da empresa, a cota seria de ${cota}%: pelo menos <b>${num(Math.ceil(n * cota / 100))} pessoas</b>.</p>` : "") +
+      `<p>A Lei de Licitações (Lei 14.133/2021, art. 116) obriga a empresa contratada a cumprir essa reserva durante todo o contrato e a comprovar isso sempre que a Prefeitura pedir.</p>`;
+  }
+  if (/ra[çc]a/i.test(campo)) {
+    return `<p>Desde 2023, a Lei 14.553 obriga os empregadores a ter, nos registros de trabalho (como a ficha de admissão e a RAIS), um campo para a pessoa declarar a própria raça ou cor.</p>` +
+      `<p>Ou seja, a empresa tem como informar esse dado. Com ele, daria para ver se há desigualdade racial no trabalho terceirizado da saúde.</p>`;
+  }
+  if (/escolar/i.test(campo)) {
+    return `<p>O grau de instrução faz parte do cadastro de todo empregado no eSocial, o sistema do governo federal onde as empresas registram quem contratam.</p>` +
+      `<p>Sem esse dado, não dá para saber se a formação das pessoas corresponde às funções que elas exercem.</p>`;
+  }
+  if (/lota|unidade/i.test(campo)) {
+    return `<p>O próprio contrato (item 9.2.36) obriga a empresa a entregar todo mês ao fiscal da Prefeitura um relatório com o nome, o cargo e a lotação de cada trabalhador.</p>` +
+      `<p>Com esse relatório, o mapa poderia mostrar quantas pessoas trabalham em cada unidade.</p>`;
+  }
+  if (/sal[áa]ri/i.test(campo)) {
+    return `<p>Pelo item 9.2.36 do contrato, a empresa entrega todo mês os contracheques ao fiscal da Prefeitura. Ou seja, essa informação já chega à Prefeitura.</p>` +
+      `<p>Atenção: o valor por posto que aparece no contrato é o custo total para o Município, e não o salário de quem trabalha.</p>`;
+  }
+  if (/benef/i.test(campo)) {
+    return `<p>O vale-transporte é um direito previsto em lei (Lei 7.418/1985). Vale-alimentação e plano de saúde costumam vir da convenção coletiva de cada categoria.</p>` +
+      `<p>Saber o que é pago mostraria se esses direitos estão sendo cumpridos.</p>`;
+  }
+  return "";
+}
+
+function renderLacunas(m) {
   const c = doMuni("campos_disponiveis").filter(r => /^Não|^Só a lista/.test(r.disponivel));
-  document.getElementById("lista-lacunas").innerHTML = c.map(r =>
-    `<div class="lacuna"><div class="lacuna-topo"><div class="icone">${iconeLacuna(r.campo)}</div><span class="selo-falta">não informado</span></div><h4>${esc(r.campo)}</h4><p>${esc(r.disponivel === "Só a lista" ? "Veio só a lista de unidades, sem quantos trabalham em cada uma." : r.detalhe.replace(/^Idem$/, "Não foi fornecido pela Prefeitura."))}</p></div>`).join("");
+  const seta = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
+  const caixa = document.getElementById("lista-lacunas");
+  caixa.innerHTML = c.map((r, i) => {
+    const mais = saibaMaisLacuna(r.campo, m);
+    return `<div class="lacuna${mais ? " tem-mais" : ""}"><div class="lacuna-topo"><div class="icone">${iconeLacuna(r.campo)}</div><span class="selo-falta">não informado</span></div><h4>${esc(r.campo)}</h4><p>${esc(r.disponivel === "Só a lista" ? "Veio só a lista de unidades, sem quantos trabalham em cada uma." : r.detalhe.replace(/^Idem$/, "Não foi fornecido pela Prefeitura."))}</p>` +
+      (mais ? `<div class="lacuna-extra" id="lacuna-extra-${i}"><div><div class="lacuna-extra-in">${mais}</div></div></div>
+        <button type="button" class="lacuna-mais" aria-expanded="false" aria-controls="lacuna-extra-${i}"><span>saiba mais</span>${seta}</button>` : "") +
+      `</div>`;
+  }).join("");
+  caixa.onclick = e => {
+    const b = e.target.closest(".lacuna-mais");
+    if (!b) return;
+    const aberta = b.closest(".lacuna").classList.toggle("aberta");
+    b.setAttribute("aria-expanded", String(aberta));
+    b.querySelector("span").textContent = aberta ? "fechar" : "saiba mais";
+  };
 }
 
 function renderMetodo() {
@@ -344,9 +459,12 @@ function renderMetodo() {
 function renderTudo() {
   const m = D.municipios.find(r => r.municipio === muni);
   renderCabecalho(m); renderKPIs(m); renderSexo(); renderIdade(m); renderFuncoes(m);
-  renderContrato(); renderVagas(); renderUnidades(); renderLacunas(); renderMetodo();
+  renderContrato(); renderVagas(); renderUnidades(); renderLacunas(m); renderMetodo();
   renderPontos(m);
   prepararRevelar();
+  ajustarKPIs();
+  atualizarMenu();
+  sincronizarEscolhas();
 }
 
 /* ---------------- inicio ---------------- */
@@ -358,29 +476,33 @@ document.querySelectorAll(".abas button").forEach(b => b.addEventListener("click
 ["busca-unidade", "filtro-tipo", "filtro-zona", "filtro-so-sms"].forEach(id =>
   document.getElementById(id).addEventListener("input", filtrarUnidades));
 
-Promise.all(ARQUIVOS.map(a => fetch(`dados/${a}.csv`).then(r => { if (!r.ok) throw new Error(a); return r.text(); })
-  .then(t => { D[a] = lerCSV(t); })))
+Promise.all([
+  ...ARQUIVOS.map(a => fetch(`dados/${a}.csv`).then(r => { if (!r.ok) throw new Error(a); return r.text(); })
+    .then(t => { D[a] = lerCSV(t); })),
+  /* lista dos municipios pesquisados: se faltar, a capa mostra so os que tem dados */
+  fetch("dados/municipios_pesquisados.csv").then(r => r.ok ? r.text() : "municipio\n").catch(() => "municipio\n")
+    .then(t => { D.municipios_pesquisados = lerCSV(t); }),
+])
   .then(() => {
-    const sel = document.getElementById("sel-municipio");
-    sel.innerHTML = D.municipios.map(m => `<option>${esc(m.municipio)}</option>`).join("");
     const pedido = new URLSearchParams(location.search).get("municipio");
-    muni = D.municipios.some(m => m.municipio === pedido) ? pedido : D.municipios[0].municipio;
-    sel.value = muni;
-    sel.disabled = D.municipios.length < 2;
-    sel.addEventListener("change", () => { muni = sel.value; renderTudo(); });
-    renderTudo();
+    muni = temDados(pedido) ? pedido : D.municipios[0].municipio;
+    iniciarEscolhas();
+    if (temDados(pedido)) mostrarPainel(false);
+    else mostrarCapa();
   })
   .catch(err => {
+    const msg = `Não foi possível carregar os dados (${esc(err.message)}). Se você abriu o arquivo direto do computador, use o atalho <b>ver_painel_no_computador.bat</b>; o navegador bloqueia a leitura dos dados quando a página é aberta como arquivo.`;
     const e = document.getElementById("erro");
-    e.hidden = false;
-    e.innerHTML = `Não foi possível carregar os dados (${esc(err.message)}). Se você abriu o arquivo direto do computador, use o atalho <b>ver_painel_no_computador.bat</b>; o navegador bloqueia a leitura dos dados quando a página é aberta como arquivo.`;
+    e.hidden = false; e.innerHTML = msg;
+    const c = document.getElementById("capa-erro");
+    if (c) { c.hidden = false; c.innerHTML = msg; }
   });
 
 /* =====================================================================
    1. CADA PONTO E UMA PESSOA (pontos que se reorganizam ao rolar)
    ===================================================================== */
 const CINZA = "var(--cinza)";
-let passoAtual = 0, pontosEtapas = [], obsPassos = null;
+let passoAtual = 0, pontosEtapas = [];
 
 function etapasPontos(m) {
   const tot = m.total_trabalhadores;
@@ -421,76 +543,252 @@ function etapasPontos(m) {
   ];
 }
 
-function layoutPontos(grupos, W) {
-  const s = W < 480 ? 7 : 9, rotH = 22, gap = 14;
+function layoutPontos(grupos, W, s) {
+  const rotH = 22, gap = 18;
   const cols = Math.max(10, Math.floor(W / s));
-  const pos = [], rots = [];
+  const pos = [], rots = [], seps = [];
   let y = 0;
-  grupos.forEach(g => {
+  grupos.forEach((g, gi) => {
     rots.push({ y: y + 14, g });
     y += rotH;
     for (let k = 0; k < g.n; k++) pos.push({ x: (k % cols) * s + s / 2, y: y + Math.floor(k / cols) * s + s / 2, cor: g.cor });
-    y += Math.ceil(g.n / cols) * s + gap;
+    y += Math.ceil(g.n / cols) * s;
+    if (gi < grupos.length - 1) seps.push(y + gap / 2);
+    y += gap;
   });
-  return { pos, rots, h: y - gap + 4, s };
+  const fim = y - gap + 8;
+  const fecho = grupos.length > 1 ? fim : null;
+  return { pos, rots, seps, fecho, total: grupos.reduce((a, g) => a + g.n, 0), h: fecho === null ? fim : fim + 26, s };
 }
 
 function renderPontos(m) {
   const svg = document.getElementById("svg-pontos");
   pontosEtapas = etapasPontos(m);
   passoAtual = 0;
+  const n = pontosEtapas.length;
   document.getElementById("passos").innerHTML = pontosEtapas.map((e, i) =>
-    `<div class="passo${i === 0 ? " ativo" : ""}" data-passo="${i}"><div class="passo-cartao"><span class="passo-num">${i + 1} de ${pontosEtapas.length}</span><p>${e.texto}</p></div></div>`).join("");
+    `<div class="passo${i === 0 ? " ativo" : ""}" data-passo="${i}" aria-hidden="${i !== 0}"><div class="passo-cartao"><span class="passo-num">${i + 1} de ${n}</span><p>${e.texto}</p></div></div>`).join("");
+  document.getElementById("progresso").innerHTML = pontosEtapas.map((e, i) =>
+    `<button type="button" class="seg${i === 0 ? " feito" : ""}" data-ir="${i}" aria-label="Ir para a etapa ${i + 1} de ${n}"><span></span></button>`).join("");
   svg.innerHTML = `<g class="rotulos"></g>` + Array.from({ length: m.total_trabalhadores }, () => `<circle class="pt" cx="0" cy="0" r="3"></circle>`).join("");
+  configurarHistoria();
   desenharPontos(true);
-  observarPassos();
+  ativarPasso(0, true);
 }
 
 function desenharPontos(semAnim) {
   const svg = document.getElementById("svg-pontos");
   if (!svg || !pontosEtapas.length) return;
-  const W = Math.floor(svg.parentElement.clientWidth);
-  if (!W) return;
-  const lays = pontosEtapas.map(e => layoutPontos(e.grupos, W));
-  const H = Math.max(...lays.map(l => l.h));
+  const caixa = svg.parentElement, cs = getComputedStyle(caixa);
+  const W = Math.floor(caixa.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+  if (W <= 0) return;
+  /* altura livre no quadro; os pontos de cada etapa ficam do maior tamanho que couber */
+  const alt = Math.floor(caixa.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom));
+  const grupos = pontosEtapas[passoAtual].grupos;
+  let L;
+  if (alt > 120) {
+    for (let t = 26; t >= 4; t -= 0.5) { L = layoutPontos(grupos, W, t); if (L.h <= alt) break; }
+  } else L = layoutPontos(grupos, W, W < 480 ? 7 : 9);
+  const H = Math.max(alt > 120 ? alt : 0, L.h);
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.setAttribute("width", W);
   svg.setAttribute("height", H);
-  const L = lays[passoAtual], pts = svg.querySelectorAll(".pt"), n = pts.length;
-  const tot = L.pos.length;
+  svg.style.height = H + "px";
+  const pts = svg.querySelectorAll(".pt"), n = pts.length;
+  const dy = Math.round((H - L.h) / 2); /* cada etapa fica centralizada no quadro */
+  const raio = Math.min(L.s * 0.38, 9);
   pts.forEach((c, i) => {
     const p = L.pos[i];
     if (semAnim) c.style.transition = "none";
-    c.setAttribute("r", (L.s * 0.36).toFixed(2));
+    c.setAttribute("r", raio.toFixed(2));
+    c.style.r = raio.toFixed(2) + "px";
     c.style.transitionDelay = semAnim ? "0ms" : `${Math.round(i / n * 450)}ms`;
-    if (p) { c.style.transform = `translate(${p.x}px, ${p.y}px)`; c.style.fill = p.cor; c.style.opacity = 1; }
+    if (p) { c.style.transform = `translate(${p.x}px, ${p.y + dy}px)`; c.style.fill = p.cor; c.style.opacity = 1; }
     else c.style.opacity = 0;
   });
   if (semAnim) { svg.getBoundingClientRect(); pts.forEach(c => { c.style.transition = ""; }); }
   const g = svg.querySelector(".rotulos");
   g.classList.remove("mostra");
+  /* linhas entre os grupos e um fecho com o total: deixam claro onde cada grupo termina */
   g.innerHTML = L.rots.map(r =>
-    `<text x="0" y="${r.y}"><tspan class="r-nome">${esc(r.g.rot)}</tspan><tspan class="r-num" dx="8">${num(r.g.n)}${L.rots.length > 1 ? ` (${pct(r.g.n, tot)})` : ""}</tspan></text>`).join("");
+    `<text x="0" y="${r.y + dy}"><tspan class="r-nome">${esc(r.g.rot)}</tspan><tspan class="r-num" dx="8">${num(r.g.n)}${L.rots.length > 1 ? ` (${pct(r.g.n, L.total)})` : ""}</tspan></text>`).join("") +
+    L.seps.map(y => `<line class="sep" x1="0" x2="${W}" y1="${y + dy}" y2="${y + dy}"></line>`).join("") +
+    (L.fecho !== null ? `<line class="fecho" x1="0" x2="${W}" y1="${L.fecho + dy}" y2="${L.fecho + dy}"></line><text class="r-total" x="${W}" y="${L.fecho + dy + 18}" text-anchor="end">Total: ${num(L.total)} pessoas</text>` : "");
   requestAnimationFrame(() => requestAnimationFrame(() => g.classList.add("mostra")));
   svg.setAttribute("aria-label", "Gráfico de pontos, cada ponto é um trabalhador. " + L.rots.map(r => `${r.g.rot}: ${r.g.n}`).join("; "));
 }
 
-function observarPassos() {
-  if (obsPassos) obsPassos.disconnect();
-  if (!("IntersectionObserver" in window)) return;
-  obsPassos = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return;
-    const i = +e.target.dataset.passo;
-    if (i === passoAtual) return;
-    passoAtual = i;
-    document.querySelectorAll(".passo").forEach(p => p.classList.toggle("ativo", +p.dataset.passo === i));
-    desenharPontos(reduzirMovimento);
-  }), { rootMargin: matchMedia("(max-width: 860px)").matches ? "-76% 0px -22% 0px" : "-48% 0px -48% 0px" });
-  document.querySelectorAll(".passo").forEach(p => obsPassos.observe(p));
+/* ---------- passo a passo: cada movimento de rolagem avanca uma etapa ---------- */
+const hist = { passo: 480 };
+let travado = false, tTrava = 0, ultimoWheel = 0, navegando = false, tNav = 0;
+let passoAnimAte = 0, yAnterior = scrollY, toqueY = null, toqueDentro = false;
+
+function alturaTela() { return document.documentElement.clientHeight || innerHeight; }
+function alturaTopo() {
+  const t = document.querySelector(".topo");
+  const h = t ? t.offsetHeight : 0;
+  raiz.style.setProperty("--topo-h", h + "px");
+  return h;
+}
+function configurarHistoria() {
+  const el = document.getElementById("historia"), palco = document.getElementById("palco");
+  if (!el || !palco || !pontosEtapas.length || naCapa()) return;
+  const vh = alturaTela(), th = alturaTopo();
+  hist.passo = Math.round(vh * 0.6);
+  palco.style.height = (vh - th) + "px";
+  el.style.height = (vh - th + (pontosEtapas.length - 1) * hist.passo + Math.round(hist.passo * 0.35)) + "px";
+}
+function limitesHistoria() {
+  const el = document.getElementById("historia");
+  const th = parseFloat(raiz.style.getPropertyValue("--topo-h")) || 0;
+  const ini = el.getBoundingClientRect().top + scrollY - th;
+  return { ini, fim: ini + (pontosEtapas.length - 1) * hist.passo };
+}
+function dentroDaHistoria(y = scrollY) {
+  if (!pontosEtapas.length || naCapa()) return false;
+  const { ini, fim } = limitesHistoria();
+  return y >= ini - 3 && y <= fim + 3;
+}
+/* rolagens feitas por links do menu, do mapa etc. passam direto pela historia */
+function marcarNavegacao(ms = 1400) {
+  navegando = true;
+  clearTimeout(tNav);
+  tNav = setTimeout(() => { navegando = false; yAnterior = scrollY; }, ms);
+}
+document.addEventListener("click", e => { if (e.target.closest('a[href^="#"]')) marcarNavegacao(); });
+
+function ativarPasso(i, forcar) {
+  const n = pontosEtapas.length;
+  if (!n || (i === passoAtual && !forcar)) return;
+  const mudou = i !== passoAtual;
+  passoAtual = i;
+  document.querySelectorAll("#passos .passo").forEach(p => {
+    const k = +p.dataset.passo;
+    p.classList.toggle("ativo", k === i);
+    p.classList.toggle("antes", k < i);
+    p.setAttribute("aria-hidden", String(k !== i));
+  });
+  document.querySelectorAll("#progresso .seg").forEach((b, k) => {
+    b.classList.toggle("feito", k <= i);
+    if (k === i) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+  });
+  document.getElementById("passo-ant").disabled = i === 0;
+  document.getElementById("passo-prox").disabled = i === n - 1;
+  document.getElementById("palco-dica").textContent = i === n - 1 ? "Pronto! Continue rolando para seguir" : "Role a tela para ver a próxima";
+  if (mudou) desenharPontos(reduzirMovimento);
+}
+function irParaPasso(k) {
+  if (!pontosEtapas.length) return;
+  k = Math.max(0, Math.min(pontosEtapas.length - 1, k));
+  const { ini } = limitesHistoria();
+  passoAnimAte = performance.now() + 850;
+  window.scrollTo({ top: Math.round(ini + k * hist.passo), behavior: reduzirMovimento ? "instant" : "smooth" });
+  ativarPasso(k);
+}
+function pararEm(top, k) {
+  window.scrollTo({ top: Math.round(top), behavior: "instant" });
+  yAnterior = Math.round(top);
+  passoAnimAte = performance.now() + 150;
+  ativarPasso(k);
 }
 
+/* mouse e touchpad: um "giro" da rodinha = uma etapa */
+addEventListener("wheel", e => {
+  if (!pontosEtapas.length || naCapa() || navegando || e.ctrlKey) return;
+  if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+  const agora = performance.now();
+  const px = e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? alturaTela() : 1);
+  const y = scrollY, { ini, fim } = limitesHistoria(), dentro = y >= ini - 3 && y <= fim + 3;
+  if (travado) {
+    /* espera o gesto terminar (o touchpad continua mandando movimento por inercia) */
+    if (agora - ultimoWheel > 200 && agora - tTrava > 500) travado = false;
+    else { ultimoWheel = agora; if (dentro) e.preventDefault(); return; }
+  }
+  ultimoWheel = agora;
+  const n = pontosEtapas.length;
+  let alvo = null;
+  if (!dentro) {
+    if (px > 0 && y < ini - 3 && y + px > ini - 3) alvo = 0;            /* chegando por cima: para na 1a etapa */
+    else if (px < 0 && y > fim + 3 && y + px < fim + 3) alvo = n - 1;   /* voltando por baixo: para na ultima */
+  } else if (px > 0 && passoAtual < n - 1) alvo = passoAtual + 1;
+  else if (px < 0 && passoAtual > 0) alvo = passoAtual - 1;
+  if (alvo === null) return;
+  e.preventDefault();
+  travado = true; tTrava = agora;
+  irParaPasso(alvo);
+}, { passive: false });
+
+/* celular: um deslize = uma etapa */
+addEventListener("touchstart", e => {
+  if (e.touches.length !== 1) { toqueY = null; return; }
+  toqueY = e.touches[0].clientY;
+  toqueDentro = dentroDaHistoria();
+}, { passive: true });
+addEventListener("touchmove", e => {
+  if (!toqueDentro || toqueY === null) return;
+  const dy = toqueY - e.touches[0].clientY;
+  if ((dy > 0 && passoAtual < pontosEtapas.length - 1) || (dy < 0 && passoAtual > 0)) e.preventDefault();
+}, { passive: false });
+addEventListener("touchend", e => {
+  if (!toqueDentro || toqueY === null) return;
+  const dy = toqueY - e.changedTouches[0].clientY;
+  toqueY = null;
+  if (Math.abs(dy) < 30) return;
+  if (dy > 0 && passoAtual < pontosEtapas.length - 1) irParaPasso(passoAtual + 1);
+  else if (dy < 0 && passoAtual > 0) irParaPasso(passoAtual - 1);
+}, { passive: true });
+
+/* teclado: setas e Page Up/Down andam uma etapa */
+addEventListener("keydown", e => {
+  if (!dentroDaHistoria() || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.target.closest("input, select, textarea, button, a, [role=listbox]")) return;
+  const n = pontosEtapas.length;
+  if (["ArrowDown", "PageDown", " "].includes(e.key) && passoAtual < n - 1) { e.preventDefault(); irParaPasso(passoAtual + 1); }
+  else if (["ArrowUp", "PageUp"].includes(e.key) && passoAtual > 0) { e.preventDefault(); irParaPasso(passoAtual - 1); }
+});
+
+/* qualquer outra rolagem: acompanha a etapa e segura quem chega rapido demais */
+addEventListener("scroll", () => {
+  const y = scrollY;
+  if (pontosEtapas.length && !naCapa() && !navegando && performance.now() > passoAnimAte) {
+    const { ini, fim } = limitesHistoria(), n = pontosEtapas.length;
+    const salto = Math.abs(y - yAnterior) < alturaTela() * 1.5;
+    if (salto && yAnterior < ini - 4 && y > ini + 4 && y <= fim) return pararEm(ini, 0);
+    if (salto && yAnterior > fim + 4 && y < fim - 4 && y >= ini) return pararEm(fim, n - 1);
+    ativarPasso(Math.max(0, Math.min(n - 1, Math.round((y - ini) / hist.passo))));
+  }
+  yAnterior = y;
+}, { passive: true });
+
+document.getElementById("progresso").addEventListener("click", e => { const b = e.target.closest("[data-ir]"); if (b) irParaPasso(+b.dataset.ir); });
+document.getElementById("passo-ant").addEventListener("click", () => irParaPasso(passoAtual - 1));
+document.getElementById("passo-prox").addEventListener("click", () => irParaPasso(passoAtual + 1));
+
+/* barrinha de rolagem do menu (celular) */
+function atualizarMenu() {
+  const nav = document.querySelector(".menu"), caixa = document.querySelector(".menu-caixa"), barra = document.querySelector(".menu-trilho span");
+  if (!nav || !caixa || !nav.clientWidth) return;
+  const sobra = nav.scrollWidth - nav.clientWidth;
+  caixa.classList.toggle("rola", sobra > 2);
+  caixa.classList.toggle("no-fim", nav.scrollLeft >= sobra - 2);
+  if (sobra > 2 && barra) {
+    barra.style.width = (nav.clientWidth / nav.scrollWidth * 100) + "%";
+    barra.style.left = (nav.scrollLeft / nav.scrollWidth * 100) + "%";
+  }
+}
+document.querySelector(".menu")?.addEventListener("scroll", atualizarMenu, { passive: true });
+
 let tempoRedim;
-addEventListener("resize", () => { clearTimeout(tempoRedim); tempoRedim = setTimeout(() => desenharPontos(true), 150); });
+function aoRedimensionar() {
+  if (naCapa()) return;
+  configurarHistoria();
+  desenharPontos(true);
+  ajustarKPIs();
+  atualizarMenu();
+  if (mapa) mapa.invalidateSize();
+}
+addEventListener("resize", () => { clearTimeout(tempoRedim); tempoRedim = setTimeout(aoRedimensionar, 150); });
+document.fonts?.ready.then(() => aoRedimensionar());
 
 /* =====================================================================
    2. AS VAGAS DO CONTRATO, UMA A UMA
@@ -505,8 +803,7 @@ function renderVagas() {
   const lista = [...fx].map(([f, v]) => ({ f, ...v })).sort((a, b) => b.prev - a.prev || b.inf - a.inf);
   let html = "", cheios = 0, vazios = 0, extras = 0;
   lista.forEach((l, fi) => {
-    const dica = esc(`<b>${esc(l.f)}</b><br>${num(l.prev)} postos previstos por mês<br>${num(l.inf)} com trabalhador informado` +
-      (l.prev > l.inf ? `<br>${num(l.prev - l.inf)} sem ninguém` : l.inf > l.prev ? `<br>${num(l.inf - l.prev)} a mais que o previsto` : ""));
+    const dica = esc(dicaVaga(l));
     const n = Math.max(l.prev, l.inf);
     for (let k = 0; k < n; k++) {
       const cheio = k < l.inf, extra = k >= l.prev;
@@ -607,6 +904,7 @@ function atualizarMapa(lista) {
 function focarNoMapa(nome) {
   const mk = marcadores.get(nome);
   if (!mk || !mapa) return;
+  marcarNavegacao();
   document.getElementById("mapa").scrollIntoView({ behavior: reduzirMovimento ? "auto" : "smooth", block: "center" });
   mapa.setView(mk.getLatLng(), 15);
   mk.openPopup();
@@ -654,16 +952,15 @@ function contar(raiz) {
 /* =====================================================================
    5. MODO CLARO / ESCURO
    O modo inicial segue o do computador ou celular; a escolha da pessoa
-   fica guardada neste navegador.
+   fica guardada neste navegador. Ha um botao na capa e outro no topo.
    ===================================================================== */
 (function () {
-  const raiz = document.documentElement;
-  const botao = document.getElementById("botao-modo");
+  const botoes = document.querySelectorAll(".botao-modo");
   const meta = document.querySelector('meta[name="theme-color"]');
   const ajustar = () => {
     const escuro = raiz.dataset.modo === "escuro";
     const txt = escuro ? "Ativar modo claro" : "Ativar modo escuro";
-    if (botao) { botao.setAttribute("aria-label", txt); botao.title = txt; }
+    botoes.forEach(b => { b.setAttribute("aria-label", txt); b.title = txt; });
     if (meta) meta.content = escuro ? "#15223A" : "#FFFFFF";
     destacarNoMapa(null);
   };
@@ -672,11 +969,22 @@ function contar(raiz) {
     try { localStorage.setItem("modo", modo); } catch (e) {}
     ajustar();
   };
-  if (botao) botao.addEventListener("click", () => {
+  botoes.forEach(b => b.addEventListener("click", () => {
     const novo = raiz.dataset.modo === "escuro" ? "claro" : "escuro";
+    /* troca suave: a pagina inteira se funde de um modo para o outro, de uma vez so */
     if (document.startViewTransition && !reduzirMovimento) document.startViewTransition(() => aplicar(novo));
     else aplicar(novo);
-  });
+  }));
+  /* durante a fusao o navegador cobre a pagina com uma "foto" e os cliques caem nela;
+     se o clique cair em cima do botao, repassa para o botao (cliques rapidos nao se perdem) */
+  document.addEventListener("click", e => {
+    if (e.target !== raiz) return;
+    const b = [...botoes].find(x => {
+      const r = x.getBoundingClientRect();
+      return r.width && e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+    });
+    if (b) { e.stopImmediatePropagation(); b.click(); }
+  }, true);
   /* se a pessoa ainda nao escolheu, acompanha a troca do sistema */
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
     let salvo = null;
@@ -722,3 +1030,251 @@ function iconeLacuna(campo) {
   const corpo = achado ? achado[1] : '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
   return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${corpo}</svg>`;
 }
+
+/* =====================================================================
+   7. CAPA E ESCOLHA DE MUNICIPIO E CONTRATO
+   Os municipios pesquisados vem de dados/municipios_pesquisados.csv.
+   So os que tem linha em dados/municipios.csv podem ser escolhidos;
+   os outros aparecem em cinza.
+   ===================================================================== */
+const naCapa = () => raiz.classList.contains("na-capa");
+const temDados = nome => !!nome && D.municipios.some(m => m.municipio === nome);
+const nomeContrato = m => String(m.contrato).replace(/\s*\(.*\)\s*$/, "");
+const AVISO_MUNI = "Os municípios em cinza ainda não têm dados publicados.";
+let renderizado = null;
+const escolhas = {};
+
+function opcoesMunicipio() {
+  const comDados = new Set(D.municipios.map(m => m.municipio));
+  const todos = [...new Set([...(D.municipios_pesquisados || []).map(r => r.municipio).filter(Boolean), ...comDados])]
+    .sort((a, b) => a.localeCompare(b, "pt-BR"));
+  return todos.map(nome => ({ valor: nome, rotulo: nome, desabilitado: !comDados.has(nome) }));
+}
+function opcoesContrato() {
+  return D.municipios.filter(m => m.municipio === muni).map(m => ({ valor: nomeContrato(m), rotulo: nomeContrato(m), desc: m.empresa }));
+}
+function urlPainel() {
+  const c = opcoesContrato()[0]?.valor || "";
+  return `?municipio=${encodeURIComponent(muni)}&contrato=${encodeURIComponent(c)}`;
+}
+
+function iniciarEscolhas() {
+  const aoMudarMuni = v => {
+    muni = v;
+    const oc = opcoesContrato();
+    escolhas.contratoCapa.atualizar(oc, oc[0]?.valor);
+    escolhas.contratoPainel.atualizar(oc, oc[0]?.valor);
+    sincronizarEscolhas();
+    if (!naCapa()) { history.replaceState(null, "", urlPainel()); renderTudo(); renderizado = muni; }
+  };
+  const oc = opcoesContrato();
+  escolhas.muniCapa = criarEscolha(document.getElementById("esc-muni"), { opcoes: opcoesMunicipio(), valor: muni, rotuloId: "rot-muni", aviso: AVISO_MUNI, aoMudar: aoMudarMuni });
+  escolhas.contratoCapa = criarEscolha(document.getElementById("esc-contrato"), { opcoes: oc, valor: oc[0]?.valor, rotuloId: "rot-contrato" });
+  escolhas.muniPainel = criarEscolha(document.getElementById("troca-muni"), { compacto: true, textoBotao: "Mudar de município", opcoes: opcoesMunicipio(), valor: muni, aviso: AVISO_MUNI, aoMudar: aoMudarMuni });
+  escolhas.contratoPainel = criarEscolha(document.getElementById("troca-contrato"), { compacto: true, textoBotao: "Ver outro contrato", opcoes: oc, valor: oc[0]?.valor });
+  document.getElementById("botao-entrar").onclick = () => mostrarPainel(true);
+}
+function sincronizarEscolhas() {
+  if (!escolhas.muniCapa) return;
+  escolhas.muniCapa.definir(muni);
+  escolhas.muniPainel.definir(muni);
+}
+
+function mostrarPainel(empurrar) {
+  if (empurrar) history.pushState({ painel: 1 }, "", urlPainel());
+  escolhaAberta?.fechar();
+  raiz.classList.remove("na-capa");
+  esconderDica();
+  window.scrollTo({ top: 0, behavior: "instant" });
+  yAnterior = 0;
+  if (renderizado !== muni) { renderTudo(); renderizado = muni; }
+  else aoRedimensionar();
+}
+function mostrarCapa() {
+  raiz.classList.add("na-capa");
+  esconderDica();
+  escolhaAberta?.fechar();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+addEventListener("popstate", () => {
+  const p = new URLSearchParams(location.search).get("municipio");
+  if (temDados(p)) { muni = p; sincronizarEscolhas(); mostrarPainel(false); }
+  else mostrarCapa();
+});
+document.querySelector(".topo .marca")?.addEventListener("click", e => {
+  e.preventDefault();
+  history.pushState(null, "", location.pathname);
+  mostrarCapa();
+});
+
+/* ---------- lista de escolha (substitui o <select> para poder mostrar
+   opcoes em cinza com aviso e ter a seta bem alinhada) ---------- */
+let escolhaAberta = null;
+function criarEscolha(caixa, cfg) {
+  let opcoes = cfg.opcoes || [], valor = cfg.valor, foco = -1;
+  const id = caixa.id;
+  caixa.classList.add("escolha");
+  if (cfg.compacto) caixa.classList.add("compacta");
+  caixa.innerHTML = `<button type="button" class="escolha-botao" aria-haspopup="listbox" aria-expanded="false" aria-controls="${id}-lista"${cfg.rotuloId ? ` aria-labelledby="${cfg.rotuloId} ${id}-txt"` : ""}>` +
+    `<span class="escolha-txt" id="${id}-txt"></span><svg class="escolha-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>` +
+    `<div class="escolha-lista" id="${id}-lista" role="listbox" tabindex="-1" hidden></div>`;
+  const botao = caixa.querySelector(".escolha-botao"), lista = caixa.querySelector(".escolha-lista"), txt = caixa.querySelector(".escolha-txt");
+  /* a lista fica direto no <body>: assim as animacoes da capa e do topo nao a deslocam nem a cortam */
+  document.body.appendChild(lista);
+  const OK = `<svg class="op-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+
+  const montar = () => {
+    const sel = opcoes.find(o => o.valor === valor);
+    txt.textContent = cfg.textoBotao || (sel ? sel.rotulo : "Nenhum disponível");
+    lista.innerHTML = opcoes.map((o, i) =>
+      `<div class="escolha-op" role="option" id="${id}-op${i}" data-i="${i}" aria-selected="${o.valor === valor}"${o.desabilitado ? ' aria-disabled="true"' : ""}>` +
+      `<span class="op-txt"><span class="op-nome">${esc(o.rotulo)}</span>${o.desc ? `<span class="op-desc">${esc(o.desc)}</span>` : ""}</span>` +
+      (o.desabilitado ? `<span class="op-tag">sem dados</span>` : OK) + `</div>`).join("") +
+      (cfg.aviso && opcoes.some(o => o.desabilitado) ? `<p class="escolha-aviso">${esc(cfg.aviso)}</p>` : "");
+    botao.disabled = !opcoes.length;
+  };
+  const habilitados = () => opcoes.map((o, i) => (o.desabilitado ? -1 : i)).filter(i => i >= 0);
+  const marcarFoco = i => {
+    foco = i;
+    lista.querySelectorAll(".escolha-op").forEach(el => el.classList.toggle("foco", +el.dataset.i === i));
+    if (i < 0) return;
+    lista.setAttribute("aria-activedescendant", `${id}-op${i}`);
+    /* rola so dentro da lista (nao a pagina) para a opcao ficar visivel */
+    const el = document.getElementById(`${id}-op${i}`);
+    if (el && el.offsetTop < lista.scrollTop) lista.scrollTop = el.offsetTop - 6;
+    else if (el && el.offsetTop + el.offsetHeight > lista.scrollTop + lista.clientHeight) lista.scrollTop = el.offsetTop + el.offsetHeight - lista.clientHeight + 6;
+  };
+  const posicionar = () => {
+    const r = botao.getBoundingClientRect();
+    lista.style.minWidth = Math.max(r.width, 230) + "px";
+    const h = lista.offsetHeight, w = lista.offsetWidth;
+    let top = r.bottom + 6;
+    if (top + h > innerHeight - 8 && r.top - h - 6 > 8) top = r.top - h - 6;
+    lista.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + "px";
+    lista.style.top = top + "px";
+  };
+  const abrir = () => {
+    if (escolhaAberta && escolhaAberta !== api) escolhaAberta.fechar();
+    lista.hidden = false;
+    botao.setAttribute("aria-expanded", "true");
+    posicionar();
+    const atual = opcoes.findIndex(o => o.valor === valor);
+    marcarFoco(atual >= 0 && !opcoes[atual].desabilitado ? atual : (habilitados()[0] ?? -1));
+    lista.focus({ preventScroll: true });
+    escolhaAberta = api;
+  };
+  const fechar = devolver => {
+    if (lista.hidden) return;
+    lista.hidden = true;
+    botao.setAttribute("aria-expanded", "false");
+    if (escolhaAberta === api) escolhaAberta = null;
+    if (devolver) botao.focus({ preventScroll: true });
+  };
+  const escolher = i => {
+    const o = opcoes[i];
+    if (!o) return;
+    if (o.desabilitado) { /* chama atencao para o aviso */
+      const av = lista.querySelector(".escolha-aviso");
+      if (av) { av.classList.remove("pulsa"); void av.offsetWidth; av.classList.add("pulsa"); }
+      return;
+    }
+    const mudou = o.valor !== valor;
+    valor = o.valor;
+    montar();
+    fechar(true);
+    if (mudou && cfg.aoMudar) cfg.aoMudar(valor);
+  };
+  botao.addEventListener("click", () => (lista.hidden ? abrir() : fechar()));
+  botao.addEventListener("keydown", e => { if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); abrir(); } });
+  lista.addEventListener("click", e => { const op = e.target.closest(".escolha-op"); if (op) escolher(+op.dataset.i); });
+  lista.addEventListener("keydown", e => {
+    const hab = habilitados(), p = hab.indexOf(foco);
+    if (e.key === "ArrowDown") { e.preventDefault(); marcarFoco(hab[Math.min(hab.length - 1, p + 1)]); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); marcarFoco(hab[Math.max(0, p - 1)]); }
+    else if (e.key === "Home") { e.preventDefault(); marcarFoco(hab[0]); }
+    else if (e.key === "End") { e.preventDefault(); marcarFoco(hab[hab.length - 1]); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); escolher(foco); }
+    else if (e.key === "Escape") { e.preventDefault(); fechar(true); }
+    else if (e.key === "Tab") fechar();
+  });
+  const api = {
+    fechar,
+    definir(v) { valor = v; montar(); },
+    atualizar(ops, v) { opcoes = ops || []; valor = v; montar(); },
+  };
+  montar();
+  return api;
+}
+document.addEventListener("mousedown", e => { if (escolhaAberta && !(e.target.closest && e.target.closest(".escolha, .escolha-lista"))) escolhaAberta.fechar(); });
+addEventListener("scroll", () => escolhaAberta?.fechar(), { passive: true });
+addEventListener("resize", () => escolhaAberta?.fechar());
+
+/* desenho de pontos da capa (so decoracao, nas cores do ODSS) */
+(function desenharCapa() {
+  const svg = document.getElementById("capa-pontos");
+  if (!svg) return;
+  const cols = 13, lins = 11, s = 32;
+  let semente = 11, h = "";
+  const sorte = () => (semente = (semente * 9301 + 49297) % 233280) / 233280;
+  for (let l = 0; l < lins; l++) for (let c = 0; c < cols; c++) {
+    const v = sorte();
+    const cls = v < 0.07 ? "c-coral" : v < 0.15 ? "c-areia" : v < 0.18 ? "c-laranja" : v < 0.19 ? "c-rosa" : "c-base";
+    h += `<circle cx="${c * s + s / 2}" cy="${l * s + s / 2}" r="${cls === "c-base" ? 5 : 7}" class="${cls}" style="animation-delay:${(sorte() * 5).toFixed(2)}s"></circle>`;
+  }
+  svg.setAttribute("viewBox", `0 0 ${cols * s} ${lins * s}`);
+  svg.innerHTML = h;
+})();
+
+/* =====================================================================
+   8. (assinatura)
+   ===================================================================== */
+(function () {
+  const TROCAS = 20, DURACAO = 30000; /* cada clique no botao de modo e uma troca */
+  let vezes = 0, mostrando = false;
+  /* cubo em 2D: tres faces 3x3 */
+  const cubo = () => {
+    const P = (o, a, b, u, v) => [o[0] + a[0] * u + b[0] * v, o[1] + a[1] * u + b[1] * v].map(n => +n.toFixed(2)).join(",");
+    const faces = [
+      { o: [3, 7], a: [9, -5], b: [9, 5], cor: "var(--areia)" },
+      { o: [3, 7], a: [9, 5], b: [0, 10], cor: "var(--coral)" },
+      { o: [12, 12], a: [9, -5], b: [0, 10], cor: "#00407D" },
+    ];
+    return `<svg viewBox="0 0 24 24" aria-hidden="true">` + faces.map(f => {
+      const borda = `M${P(f.o, f.a, f.b, 0, 0)} L${P(f.o, f.a, f.b, 1, 0)} L${P(f.o, f.a, f.b, 1, 1)} L${P(f.o, f.a, f.b, 0, 1)}Z`;
+      const grade = [1 / 3, 2 / 3].map(t => `M${P(f.o, f.a, f.b, t, 0)} L${P(f.o, f.a, f.b, t, 1)} M${P(f.o, f.a, f.b, 0, t)} L${P(f.o, f.a, f.b, 1, t)}`).join(" ");
+      return `<path d="${borda}" fill="${f.cor}"/><path d="${grade}" stroke="#fff" stroke-width=".7" fill="none"/>`;
+    }).join("") + `</svg>`;
+  };
+  const mostrar = () => {
+    mostrando = true;
+    const el = document.createElement("div");
+    el.className = "assinatura";
+    el.setAttribute("role", "note");
+    el.innerHTML = `${cubo()}<span>Powered by FNVT</span>`;
+    document.body.appendChild(el);
+    /* fica preso na tela, logo acima do selo "Powered by Netlify" (que o Netlify poe no canto) */
+    const posicionar = () => {
+      const nf = [...document.querySelectorAll("iframe")].find(f => {
+        const r = f.getBoundingClientRect();
+        return getComputedStyle(f).position === "fixed" && r.width > 0 && r.bottom >= innerHeight - 4 && r.left > innerWidth / 2;
+      });
+      if (nf) {
+        const r = nf.getBoundingClientRect();
+        el.style.bottom = Math.round(innerHeight - r.top - 4) + "px";
+        el.style.right = Math.max(8, Math.round(document.documentElement.clientWidth - r.right + 20)) + "px";
+      } else { el.style.bottom = "20px"; el.style.right = "20px"; }
+    };
+    posicionar();
+    const vigia = setInterval(posicionar, 1000); /* acompanha se o selo do Netlify carregar depois ou mudar de lugar */
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("visivel")));
+    setTimeout(() => {
+      el.classList.remove("visivel");
+      setTimeout(() => { el.remove(); clearInterval(vigia); mostrando = false; }, 900);
+    }, DURACAO);
+  };
+  document.addEventListener("click", e => {
+    if (e.target === document.documentElement) return; /* clique durante a troca suave de cores: nao conta nem zera */
+    if (!(e.target.closest && e.target.closest(".botao-modo"))) { vezes = 0; return; }
+    if (++vezes >= TROCAS && !mostrando) { vezes = 0; mostrar(); }
+  });
+})();

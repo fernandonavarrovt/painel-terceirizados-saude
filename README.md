@@ -19,7 +19,13 @@ Primeiro município: **Mossoró/RN**. Fonte: processo SEI 06.000984/2026-35, res
 1. Troque ou edite os arquivos da pasta `dados/` (pode ser pelo próprio site do GitHub).
 2. Salve (commit). O Netlify publica a nova versão sozinho em cerca de um minuto.
 
-Para incluir outro município, acrescente linhas nos CSVs com o nome dele na coluna `municipio` (e uma linha em `municipios.csv`). O seletor de município aparece sozinho.
+Para incluir outro município, acrescente linhas nos CSVs com o nome dele na coluna `municipio` (e uma linha em `municipios.csv`).
+
+## Capa e escolha do município
+
+- O site abre numa capa, onde a pessoa escolhe o município e o contrato.
+- A lista de municípios vem de `dados/municipios_pesquisados.csv` (os 10 pesquisados pelo ODSS). Os que ainda não têm linha em `municipios.csv` aparecem em cinza e não podem ser escolhidos. Quando os dados de um deles entrarem nos CSVs, ele passa a ficar disponível sozinho.
+- O endereço com `?municipio=Mossoró` abre o painel direto, sem passar pela capa (bom para compartilhar).
 
 ## Mapa das unidades
 
